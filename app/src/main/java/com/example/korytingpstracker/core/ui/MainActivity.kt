@@ -1,7 +1,9 @@
 package com.example.korytingpstracker.core.ui
 
 import android.os.Bundle
+import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.korytingpstracker.R
@@ -18,8 +20,19 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         val navController = navHostFragment.navController
-
         binding.bottomNav.setupWithNavController(navController)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.currentTrackFragment -> {
+                    binding.bottomNav.isVisible = false
+                }
+
+                else -> {
+                    binding.bottomNav.isVisible = true
+                }
+            }
+        }
+
     }
 
     override fun onDestroy() {
