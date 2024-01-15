@@ -1,7 +1,7 @@
 package com.example.korytingpstracker
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.example.korytingpstracker.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -11,10 +11,30 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun onBottomNavClick() {
+        binding.bottomNav.setOnItemSelectedListener {
+            when (it.itemId) {
+                R.id.id_main_menu -> {
+
+                }
+
+                R.id.id_tracks -> {
+
+                }
+
+                R.id.id_settings -> {
+
+                }
+            }
+            true
+        }
     }
 }
