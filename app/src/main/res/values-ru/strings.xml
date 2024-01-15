@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Волшебный клубочек</string>
+    <string name="main">главное</string>
+    <string name="settings">настройки</string>
+    <string name="tracks">маршруты</string>
+</resources>

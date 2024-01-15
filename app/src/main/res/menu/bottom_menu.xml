@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/id_main_menu"
+        android:title="@string/main"
+        android:icon="@drawable/ic_home"
+        android:orderInCategory="1"/>
+
+    <item android:id="@+id/id_tracks"
+        android:title="@string/tracks"
+        android:icon="@drawable/ic_list"
+        android:orderInCategory="2"/>
+
+    <item android:id="@+id/id_settings"
+        android:title="@string/settings"
+        android:icon="@drawable/ic_settings"
+        android:orderInCategory="3"/>
+</menu>
