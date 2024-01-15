@@ -2,6 +2,8 @@ package com.example.korytingpstracker
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.example.korytingpstracker.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -12,29 +14,15 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
+        val navController = navHostFragment.navController
+
+        binding.bottomNav.setupWithNavController(navController)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-    }
-
-    private fun onBottomNavClick() {
-        binding.bottomNav.setOnItemSelectedListener {
-            when (it.itemId) {
-                R.id.id_main_menu -> {
-
-                }
-
-                R.id.id_tracks -> {
-
-                }
-
-                R.id.id_settings -> {
-
-                }
-            }
-            true
-        }
     }
 }
