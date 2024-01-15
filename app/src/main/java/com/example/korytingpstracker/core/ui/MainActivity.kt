@@ -1,9 +1,10 @@
-package com.example.korytingpstracker
+package com.example.korytingpstracker.core.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.example.korytingpstracker.R
 import com.example.korytingpstracker.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
