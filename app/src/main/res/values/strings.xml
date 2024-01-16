@@ -3,4 +3,10 @@
     <string name="main">main</string>
     <string name="tracks">tracks</string>
     <string name="settings">settings</string>
+    <string name="sec10">10 seconds</string>
+    <string name="sec30">30 seconds</string>
+    <string name="sec3">3 seconds</string>
+    <string name="update_time">update time</string>
+    <string name="update_time_hint">geolocation update interval</string>
+    <string name="locations">locations settings</string>
 </resources>
