@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import com.example.korytingpstracker.main_menu.data.api.MapClient
 import org.osmdroid.config.Configuration
 import org.osmdroid.library.BuildConfig
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 
 class OpenStreetMapClient(
     private val context: Context,
@@ -13,5 +14,9 @@ class OpenStreetMapClient(
     override fun configureMap() {
         Configuration.getInstance().load(context, sharedPreferences)
         Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
+    }
+
+    override fun getGPSProvider(): GpsMyLocationProvider {
+        return GpsMyLocationProvider(context)
     }
 }
