@@ -9,4 +9,7 @@
     <string name="update_time">update time</string>
     <string name="update_time_hint">geolocation update interval</string>
     <string name="locations">locations settings</string>
+    <string name="update_time_key" translatable="false">update_time_key</string>
+    <string name="sec">sec</string>
+
 </resources>

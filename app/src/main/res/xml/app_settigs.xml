@@ -8,12 +8,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="3000"
-            android:title="@string/tracks"
+            android:title="@string/update_time"
             app:dialogIcon="@drawable/ic_update_time"
             app:entries="@array/location_time_update_name"
             app:entryValues="@array/location_time_update_value"
             app:icon="@drawable/ic_update_time"
-            app:key="update_time_key"
+            app:key="@string/update_time_key"
             app:summary="@string/update_time_hint" />
     </PreferenceCategory>
 </PreferenceScreen>
