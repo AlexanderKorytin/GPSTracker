@@ -1,5 +1,6 @@
 package com.example.korytingpstracker.settings.ui.fragments
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
@@ -15,6 +16,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private var _fragmentView: View? = null
     private val fragmentView get() = _fragmentView!!
     private lateinit var timePref: Preference
+    private lateinit var colorPref: Preference
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -49,17 +51,23 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun getSettingsPreference() {
-        timePref = findPreference(AppSettingsPrefKeys.TIMEPREFKEY.value)!!
+        timePref = findPreference(getString(AppSettingsPrefKeys.TIMEPREFKEY.value))!!
+        colorPref = findPreference(getString(AppSettingsPrefKeys.COLORLINE.value))!!
         val listener = onPreferenceChangeListner()
         timePref.onPreferenceChangeListener = listener
+        colorPref.onPreferenceChangeListener = listener
         initPref()
     }
 
     private fun onPreferenceChangeListner(): OnPreferenceChangeListener {
         return OnPreferenceChangeListener { pref, value ->
             when (pref.key) {
-                AppSettingsPrefKeys.TIMEPREFKEY.value -> {
+                getString(AppSettingsPrefKeys.TIMEPREFKEY.value) -> {
                     pref.title = setTitleUpdateTime(pref, value.toString())
+                }
+
+                getString(AppSettingsPrefKeys.COLORLINE.value) -> {
+                    colorPref.icon?.setTint(setColorIconTrackLine(pref, value.toString()))
                 }
             }
             true
@@ -67,11 +75,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun initPref() {
-        val updateTimeCurrent = timePref.preferenceManager.sharedPreferences?.getString(
-            AppSettingsPrefKeys.TIMEPREFKEY.value,
-            "3000"
+        val pref = timePref.preferenceManager.sharedPreferences
+
+        val updateTimeCurrent = pref?.getString(
+            getString(AppSettingsPrefKeys.TIMEPREFKEY.value),
+            resources.getStringArray(R.array.location_time_update_value)[0]
         )
         timePref.title = setTitleUpdateTime(timePref, updateTimeCurrent)
+
+        val colorLineCurrent = pref?.getString(
+            getString(AppSettingsPrefKeys.COLORLINE.value),
+            resources.getStringArray(R.array.color_line_value)[0]
+        )
+        colorPref.icon?.setTint(setColorIconTrackLine(colorPref, colorLineCurrent))
     }
 
     private fun setTitleUpdateTime(pref: Preference, currentValue: String?): String {
@@ -80,5 +96,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         return "${
             pref.title?.split(separator)?.get(0) ?: getString(R.string.update_time)
         }: ${nameArray[valueArray.indexOf(currentValue)]}"
+    }
+
+    private fun setColorIconTrackLine(pref: Preference, currentValue: String?): Int {
+        return Color.parseColor(currentValue)
     }
 }

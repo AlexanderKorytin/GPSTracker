@@ -11,4 +11,9 @@
     <string name="update_time_hint">интервал обновления геолокации</string>
     <string name="locations">настройки геолокации</string>
     <string name="sec">сек</string>
+    <string name="set_color">цвет линии</string>
+    <string name="color_line_hint">измените цвет линии пути</string>
+    <string name="red">красный</string>
+    <string name="blue">синий</string>
+    <string name="green">зеленый</string>
 </resources>

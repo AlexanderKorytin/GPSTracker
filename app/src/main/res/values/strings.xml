@@ -3,13 +3,23 @@
     <string name="main">main</string>
     <string name="tracks">tracks</string>
     <string name="settings">settings</string>
+
     <string name="sec10">10 seconds</string>
     <string name="sec30">30 seconds</string>
     <string name="sec3">3 seconds</string>
+
+    <string name="red">red</string>
+    <string name="blue">blue</string>
+    <string name="green">green</string>
+
     <string name="update_time">update time</string>
     <string name="update_time_hint">geolocation update interval</string>
+    <string name="set_color">color line</string>
+    <string name="color_line_hint">change color track line</string>
     <string name="locations">locations settings</string>
-    <string name="update_time_key" translatable="false">update_time_key</string>
     <string name="sec">sec</string>
+
+    <string name="update_time_key" translatable="false">update_time_key</string>
+    <string name="color_key" translatable="false">color_key</string>
 
 </resources>

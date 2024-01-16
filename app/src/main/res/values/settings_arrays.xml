@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string-array name="location_time_update_name">
         <item>@string/sec3</item>
         <item>@string/sec10</item>
@@ -10,4 +11,16 @@
         <item>10000</item>
         <item>30000</item>
     </string-array>
+
+    <string-array name="color_line_name">
+        <item>@string/red</item>
+        <item>@string/blue</item>
+        <item>@string/green</item>
+    </string-array>
+    <string-array name="color_line_value">
+        <item>#FFFB0202</item>
+        <item>#FF00A7FF</item>
+        <item>#FF1AFF00</item>
+    </string-array>
+
 </resources>

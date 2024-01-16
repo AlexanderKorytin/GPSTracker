@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="@string/locations">
+    <PreferenceCategory
+        android:title="@string/locations"
+        app:icon="@drawable/ic_location_set">
 
         <ListPreference
             android:layout_width="wrap_content"
@@ -15,5 +17,16 @@
             app:icon="@drawable/ic_update_time"
             app:key="@string/update_time_key"
             app:summary="@string/update_time_hint" />
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="#FFFB0202"
+            android:title="@string/set_color"
+            app:entries="@array/color_line_name"
+            app:entryValues="@array/color_line_value"
+            app:icon="@drawable/ic_color_line"
+            app:key="@string/color_key"
+            app:summary="@string/color_line_hint" />
+
     </PreferenceCategory>
 </PreferenceScreen>
