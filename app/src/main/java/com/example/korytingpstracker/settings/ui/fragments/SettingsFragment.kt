@@ -63,11 +63,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
         return OnPreferenceChangeListener { pref, value ->
             when (pref.key) {
                 getString(AppSettingsPrefKeys.TIMEPREFKEY.value) -> {
-                    pref.title = setTitleUpdateTime(pref, value.toString())
+                    pref.title = setTitleUpdateTime(value.toString())
                 }
 
                 getString(AppSettingsPrefKeys.COLORLINE.value) -> {
-                    colorPref.icon?.setTint(setColorIconTrackLine(pref, value.toString()))
+                    colorPref.icon?.setTint(setColorIconTrackLine(value.toString()))
                 }
             }
             true
@@ -81,24 +81,24 @@ class SettingsFragment : PreferenceFragmentCompat() {
             getString(AppSettingsPrefKeys.TIMEPREFKEY.value),
             resources.getStringArray(R.array.location_time_update_value)[0]
         )
-        timePref.title = setTitleUpdateTime(timePref, updateTimeCurrent)
+        timePref.title = setTitleUpdateTime(updateTimeCurrent)
 
         val colorLineCurrent = pref?.getString(
             getString(AppSettingsPrefKeys.COLORLINE.value),
             resources.getStringArray(R.array.color_line_value)[0]
         )
-        colorPref.icon?.setTint(setColorIconTrackLine(colorPref, colorLineCurrent))
+        colorPref.icon?.setTint(setColorIconTrackLine(colorLineCurrent))
     }
 
-    private fun setTitleUpdateTime(pref: Preference, currentValue: String?): String {
+    private fun setTitleUpdateTime(currentValue: String?): String {
         val nameArray = resources.getStringArray(R.array.location_time_update_name)
         val valueArray = resources.getStringArray(R.array.location_time_update_value)
         return "${
-            pref.title?.split(separator)?.get(0) ?: getString(R.string.update_time)
+            timePref.title?.split(separator)?.get(0) ?: getString(R.string.update_time)
         }: ${nameArray[valueArray.indexOf(currentValue)]}"
     }
 
-    private fun setColorIconTrackLine(pref: Preference, currentValue: String?): Int {
+    private fun setColorIconTrackLine(currentValue: String?): Int {
         return Color.parseColor(currentValue)
     }
 }
