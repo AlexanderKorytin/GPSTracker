@@ -1,9 +1,9 @@
 package com.example.korytingpstracker.main_menu.ui.fragments
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.LayoutInflater
@@ -47,9 +47,7 @@ class MainFragment : Fragment() {
         )
         binding.root.startAnimation(anim)
         mainViewModel.getProvider()
-        lifecycleScope.launch {
-            checkPermissionLocation()
-        }
+        checkPermission()
     }
 
     override fun onDestroyView() {
@@ -80,29 +78,50 @@ class MainFragment : Fragment() {
     }
 
     @SuppressLint("MissingPermission")
-    private suspend fun checkPermissionLocation() {
-        requester.request(
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ).collect { result ->
-            when (result) {
-                // Пользователь дал разрешение, можно продолжать работу
-                is PermissionResult.Granted -> {
-                    initOsm()
-                }
-                //Пользователь отказал в предоставлении разрешения
-                is PermissionResult.Denied -> {}
-                // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
-                is PermissionResult.Denied.DeniedPermanently -> {
-                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    intent.data = Uri.fromParts("package", requireActivity().packageName, null)
-                    requireActivity().startActivity(intent)
-                }
-                // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
-                is PermissionResult.Cancelled -> {
-                    return@collect
+    private suspend fun checkPermissionLocation(listPermission: Array<String>) {
+        listPermission.forEach { permission ->
+            requester.request(permission).collect { result ->
+                when (result) {
+                    // Пользователь дал разрешение, можно продолжать работу
+                    is PermissionResult.Granted -> {
+                        initOsm()
+                    }
+                    //Пользователь отказал в предоставлении разрешения
+                    is PermissionResult.Denied -> {}
+                    // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
+                    is PermissionResult.Denied.DeniedPermanently -> {
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        intent.data = Uri.fromParts("package", requireActivity().packageName, null)
+                        requireActivity().startActivity(intent)
+                    }
+                    // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
+                    is PermissionResult.Cancelled -> {
+                        return@collect
+                    }
                 }
             }
+        }
+    }
+
+    private fun checkPermission() {
+        val arrayPermissionResult = mutableListOf<String>()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            arrayPermissionResult.addAll(
+                arrayOf(
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                )
+            )
+        } else {
+            arrayPermissionResult.addAll(
+                arrayOf(
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                )
+            )
+        }
+        lifecycleScope.launch {
+            checkPermissionLocation(arrayPermissionResult.toTypedArray())
         }
     }
 
@@ -110,7 +129,6 @@ class MainFragment : Fragment() {
         fun newInstance(param1: String, param2: String) =
             MainFragment().apply {
                 arguments = Bundle().apply {
-
                 }
             }
     }
