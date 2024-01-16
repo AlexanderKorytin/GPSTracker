@@ -47,7 +47,9 @@ class MainFragment : Fragment() {
         )
         binding.root.startAnimation(anim)
         mainViewModel.getProvider()
-        initOsm()
+        lifecycleScope.launch {
+            checkPermissionLocation()
+        }
     }
 
     override fun onDestroyView() {
@@ -66,7 +68,8 @@ class MainFragment : Fragment() {
                 myGPSProvider = it
             }
             myLocationNewOverlay = MyLocationNewOverlay(myGPSProvider, map)
-            checkPermissionLocation()
+            myLocationNewOverlay.enableMyLocation()
+            myLocationNewOverlay.enableFollowLocation()
             myLocationNewOverlay.runOnFirstFix {
                 binding.map.overlays.clear()
                 binding.map.overlays.add(myLocationNewOverlay)
@@ -84,8 +87,7 @@ class MainFragment : Fragment() {
             when (result) {
                 // Пользователь дал разрешение, можно продолжать работу
                 is PermissionResult.Granted -> {
-                    myLocationNewOverlay.enableMyLocation()
-                    myLocationNewOverlay.enableFollowLocation()
+                    initOsm()
                 }
                 //Пользователь отказал в предоставлении разрешения
                 is PermissionResult.Denied -> {}
