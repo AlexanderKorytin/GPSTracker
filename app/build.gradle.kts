@@ -39,6 +39,8 @@ android {
 }
 
 dependencies {
+    // Preference Fragment
+    implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
     implementation("io.insert-koin:koin-android:3.3.0")
