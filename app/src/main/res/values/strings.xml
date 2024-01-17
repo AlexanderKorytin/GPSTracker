@@ -6,6 +6,11 @@
     <string name="dialog_back_loc_title">Permission for background geolocation</string>
     <string name="dialog_back_loc_message">To record a route when the screen is off, you need permission to access the geodata in the background. You will be directed to the settings screen.</string>
 
+    <string name="dialog_location_title">The "Location detection" setting is disabled</string>
+    <string name="dialog_location_message">Would you like to turn it on? The application will not work with the disabled setting!</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
     <string name="sec10">10 seconds</string>
     <string name="sec30">30 seconds</string>
     <string name="sec3">3 seconds</string>

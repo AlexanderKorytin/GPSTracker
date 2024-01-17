@@ -5,6 +5,7 @@
     <string name="settings">Настройки</string>
     <string name="tracks">Маршруты</string>
     <string name="sec3">3 секунды</string>
+    <string name="dialog_location_title">Настройка \"Определение местоположения\" отключена</string>
     <string name="sec10">10 секунд</string>
     <string name="sec30">30 секунд</string>
     <string name="update_time">Время обновления</string>
@@ -19,4 +20,7 @@
     <string name="dialog_back_loc_title">Разрешение на фоновую геолокацию</string>
     <string name="dialog_back_loc_message">Для записи маршрута при отключено экране необходимо разрешение на доступ к геоданным в фоновом режиме.  Вы будете направлены на экран настроек.</string>
     <string name="dialog_back_loc_neutral">Хорошо</string>
+    <string name="dialog_location_message">Желаете включить? С отключенной настройкой приложение работать не будет!</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
 </resources>

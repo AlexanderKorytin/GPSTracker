@@ -108,14 +108,14 @@ class MainFragment : Fragment() {
         if (!isEnabled) {
             MaterialAlertDialogBuilder(requireContext())
                 .setCancelable(false)
-                .setTitle("Gps")
-                .setMessage("switch Gps")
-                .setPositiveButton("Yes") { dialog, which ->
+                .setTitle(requireContext().getString(R.string.dialog_location_title))
+                .setMessage(requireContext().getString(R.string.dialog_location_message))
+                .setPositiveButton(requireContext().getString(R.string.yes)) { dialog, which ->
                     val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     requireActivity().startActivity(intent)
                 }
-                .setNegativeButton("No") { dialog, which ->
+                .setNegativeButton(requireContext().getString(R.string.no)) { dialog, which ->
                     requireActivity().finish()
                 }.show()
         }
