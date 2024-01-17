@@ -1,5 +1,7 @@
 package com.example.korytingpstracker.main_menu.ui.fragments
 
+import android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
@@ -12,8 +14,11 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.example.korytingpstracker.R
+import com.example.korytingpstracker.app.App
 import com.example.korytingpstracker.databinding.FragmentMainBinding
 import com.example.korytingpstracker.main_menu.ui.viewmodel.MainViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.markodevcic.peko.PermissionRequester
 import com.markodevcic.peko.PermissionResult
 import kotlinx.coroutines.Dispatchers
@@ -69,8 +74,8 @@ class MainFragment : Fragment() {
             myLocationNewOverlay.enableMyLocation()
             myLocationNewOverlay.enableFollowLocation()
             myLocationNewOverlay.runOnFirstFix {
-                binding.map.overlays.clear()
-                binding.map.overlays.add(myLocationNewOverlay)
+                map.overlays.clear()
+                map.overlays.add(myLocationNewOverlay)
             }
             myLocationNewOverlay.enableFollowLocation()
             map.controller.setZoom(17.0)
@@ -80,26 +85,87 @@ class MainFragment : Fragment() {
     @SuppressLint("MissingPermission")
     private suspend fun checkPermissionLocation(listPermission: Array<String>) {
         listPermission.forEach { permission ->
-            requester.request(permission).collect { result ->
-                when (result) {
-                    // Пользователь дал разрешение, можно продолжать работу
-                    is PermissionResult.Granted -> {
-                        initOsm()
-                    }
-                    //Пользователь отказал в предоставлении разрешения
-                    is PermissionResult.Denied -> {}
-                    // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
-                    is PermissionResult.Denied.DeniedPermanently -> {
-                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        intent.data = Uri.fromParts("package", requireActivity().packageName, null)
-                        requireActivity().startActivity(intent)
-                    }
-                    // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
-                    is PermissionResult.Cancelled -> {
-                        return@collect
+            when (permission) {
+                ACCESS_FINE_LOCATION -> {
+                    requester.request(permission).collect { result ->
+                        checkedResultFineLocation(result)
                     }
                 }
+
+                ACCESS_BACKGROUND_LOCATION -> {
+                    if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q){
+                        requester.request(permission).collect { result ->
+                            checkedResultBackGroundLocation(result)
+                        }
+                    }
+                    if (App.needDialogShow&&(Build.VERSION.SDK_INT != Build.VERSION_CODES.Q)) {
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setCancelable(false)
+                            .setTitle(requireContext().getString(R.string.dialog_back_loc_title))
+                            .setMessage(requireContext().getString(R.string.dialog_back_loc_message))
+                            .setNeutralButton(requireContext().getString(R.string.dialog_back_loc_neutral)) { dialog, which ->
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    requester.request(permission).collect { result ->
+                                        checkedResultBackGroundLocation(result)
+                                    }
+                                }
+                            }.show()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun checkedResultBackGroundLocation(result: PermissionResult) {
+        when (result) {
+            // Пользователь дал разрешение, можно продолжать работу
+            is PermissionResult.Granted -> {
+                App.needDialogShow = false
+                mainViewModel.saveIsNeedShowDialog(App.needDialogShow)
+            }
+            //Пользователь отказал в предоставлении разрешения
+            is PermissionResult.Denied -> {
+                App.needDialogShow = true
+                mainViewModel.saveIsNeedShowDialog(App.needDialogShow)
+            }
+            // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
+            is PermissionResult.Denied.NeedsRationale -> {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(requireContext().getString(R.string.dialog_back_loc_title))
+                    .setMessage(requireContext().getString(R.string.dialog_back_loc_message))
+                    .setNeutralButton(requireContext().getString(R.string.dialog_back_loc_neutral)) { dialog, which ->
+
+                    }.show()
+            }
+            // Canceled
+            is PermissionResult.Cancelled -> {
+                return
+            }
+        }
+    }
+
+    private fun checkedResultFineLocation(result: PermissionResult) {
+        when (result) {
+            // Пользователь дал разрешение, можно продолжать работу
+            is PermissionResult.Granted -> {
+                initOsm()
+            }
+            //Пользователь отказал в предоставлении разрешения
+            is PermissionResult.Denied -> {}
+            // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
+            is PermissionResult.Denied.DeniedPermanently -> {
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent.data = Uri.fromParts("package", requireActivity().packageName, null)
+                requireActivity().startActivity(intent)
+            }
+
+            is PermissionResult.Denied.NeedsRationale -> {
+
+            }
+            // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
+            is PermissionResult.Cancelled -> {
+                return
             }
         }
     }
@@ -109,14 +175,14 @@ class MainFragment : Fragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             arrayPermissionResult.addAll(
                 arrayOf(
-                    android.Manifest.permission.ACCESS_FINE_LOCATION,
-                    android.Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                    ACCESS_FINE_LOCATION,
+                    ACCESS_BACKGROUND_LOCATION,
                 )
             )
         } else {
             arrayPermissionResult.addAll(
                 arrayOf(
-                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    ACCESS_FINE_LOCATION,
                 )
             )
         }
@@ -125,11 +191,4 @@ class MainFragment : Fragment() {
         }
     }
 
-    companion object {
-        fun newInstance(param1: String, param2: String) =
-            MainFragment().apply {
-                arguments = Bundle().apply {
-                }
-            }
-    }
 }
