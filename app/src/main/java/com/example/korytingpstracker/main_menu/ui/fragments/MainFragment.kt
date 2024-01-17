@@ -82,23 +82,44 @@ class MainFragment : Fragment() {
         }
     }
 
+    private fun checkPermission() {
+        val arrayPermissionResult = mutableListOf<String>()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            arrayPermissionResult.addAll(
+                arrayOf(
+                    ACCESS_FINE_LOCATION,
+                    ACCESS_BACKGROUND_LOCATION,
+                )
+            )
+        } else {
+            arrayPermissionResult.addAll(
+                arrayOf(
+                    ACCESS_FINE_LOCATION,
+                )
+            )
+        }
+        lifecycleScope.launch {
+            checkPermissionLocation(arrayPermissionResult.toTypedArray())
+        }
+    }
+
     @SuppressLint("MissingPermission")
     private suspend fun checkPermissionLocation(listPermission: Array<String>) {
         listPermission.forEach { permission ->
             when (permission) {
                 ACCESS_FINE_LOCATION -> {
                     requester.request(permission).collect { result ->
-                        checkedResultFineLocation(result)
+                        getResultFineLocation(result)
                     }
                 }
 
                 ACCESS_BACKGROUND_LOCATION -> {
-                    if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q){
+                    if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
                         requester.request(permission).collect { result ->
-                            checkedResultBackGroundLocation(result)
+                            getResultBackGroundLocation(result)
                         }
                     }
-                    if (App.needDialogShow&&(Build.VERSION.SDK_INT != Build.VERSION_CODES.Q)) {
+                    if (App.needDialogShow && (Build.VERSION.SDK_INT != Build.VERSION_CODES.Q)) {
                         MaterialAlertDialogBuilder(requireContext())
                             .setCancelable(false)
                             .setTitle(requireContext().getString(R.string.dialog_back_loc_title))
@@ -106,7 +127,7 @@ class MainFragment : Fragment() {
                             .setNeutralButton(requireContext().getString(R.string.dialog_back_loc_neutral)) { dialog, which ->
                                 lifecycleScope.launch(Dispatchers.IO) {
                                     requester.request(permission).collect { result ->
-                                        checkedResultBackGroundLocation(result)
+                                        getResultBackGroundLocation(result)
                                     }
                                 }
                             }.show()
@@ -116,7 +137,33 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun checkedResultBackGroundLocation(result: PermissionResult) {
+    private fun getResultFineLocation(result: PermissionResult) {
+        when (result) {
+            // Пользователь дал разрешение, можно продолжать работу
+            is PermissionResult.Granted -> {
+                initOsm()
+            }
+            //Пользователь отказал в предоставлении разрешения
+            is PermissionResult.Denied -> {}
+            // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
+            is PermissionResult.Denied.DeniedPermanently -> {
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent.data = Uri.fromParts("package", requireActivity().packageName, null)
+                requireActivity().startActivity(intent)
+            }
+
+            is PermissionResult.Denied.NeedsRationale -> {
+
+            }
+            // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
+            is PermissionResult.Cancelled -> {
+                return
+            }
+        }
+    }
+
+    private fun getResultBackGroundLocation(result: PermissionResult) {
         when (result) {
             // Пользователь дал разрешение, можно продолжать работу
             is PermissionResult.Granted -> {
@@ -144,51 +191,5 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun checkedResultFineLocation(result: PermissionResult) {
-        when (result) {
-            // Пользователь дал разрешение, можно продолжать работу
-            is PermissionResult.Granted -> {
-                initOsm()
-            }
-            //Пользователь отказал в предоставлении разрешения
-            is PermissionResult.Denied -> {}
-            // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
-            is PermissionResult.Denied.DeniedPermanently -> {
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                intent.data = Uri.fromParts("package", requireActivity().packageName, null)
-                requireActivity().startActivity(intent)
-            }
-
-            is PermissionResult.Denied.NeedsRationale -> {
-
-            }
-            // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
-            is PermissionResult.Cancelled -> {
-                return
-            }
-        }
-    }
-
-    private fun checkPermission() {
-        val arrayPermissionResult = mutableListOf<String>()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            arrayPermissionResult.addAll(
-                arrayOf(
-                    ACCESS_FINE_LOCATION,
-                    ACCESS_BACKGROUND_LOCATION,
-                )
-            )
-        } else {
-            arrayPermissionResult.addAll(
-                arrayOf(
-                    ACCESS_FINE_LOCATION,
-                )
-            )
-        }
-        lifecycleScope.launch {
-            checkPermissionLocation(arrayPermissionResult.toTypedArray())
-        }
-    }
 
 }
