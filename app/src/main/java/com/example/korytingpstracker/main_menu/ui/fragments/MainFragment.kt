@@ -37,7 +37,7 @@ class MainFragment : Fragment() {
     private val requester = PermissionRequester.instance()
     private lateinit var myLocationNewOverlay: MyLocationNewOverlay
     private lateinit var myGPSProvider: GpsMyLocationProvider
-    private var isGpsEnabled : MutableLiveData<Boolean> = MutableLiveData(false)
+    private var isGpsEnabled: MutableLiveData<Boolean> = MutableLiveData(false)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,7 +59,7 @@ class MainFragment : Fragment() {
             requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         isGpsEnabled.value = locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
         isGpsEnabled.observe(viewLifecycleOwner) {
-            if (it){
+            if (it) {
                 mainViewModel.getProvider()
                 checkPermission()
             }
@@ -68,7 +68,7 @@ class MainFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (isGpsEnabled.value == false){
+        if (isGpsEnabled.value == false) {
             isGpsSwitchOn()
         }
 
