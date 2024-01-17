@@ -37,7 +37,7 @@ class MainFragment : Fragment() {
     private val requester = PermissionRequester.instance()
     private lateinit var myLocationNewOverlay: MyLocationNewOverlay
     private lateinit var myGPSProvider: GpsMyLocationProvider
-    private var isGpsEnabled: MutableLiveData<Boolean> = MutableLiveData(false)
+    private var isGpsNeedChecked: MutableLiveData<Boolean> = MutableLiveData(false)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,8 +57,8 @@ class MainFragment : Fragment() {
         binding.root.startAnimation(anim)
         val locManager =
             requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        isGpsEnabled.value = locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        isGpsEnabled.observe(viewLifecycleOwner) {
+        isGpsNeedChecked.value = locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        isGpsNeedChecked.observe(viewLifecycleOwner) {
             if (it) {
                 mainViewModel.getProvider()
                 checkPermission()
@@ -68,7 +68,7 @@ class MainFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (isGpsEnabled.value == false) {
+        if (isGpsNeedChecked.value == false) {
             isGpsSwitchOn()
         }
 
@@ -119,7 +119,7 @@ class MainFragment : Fragment() {
                     requireActivity().finish()
                 }.show()
         }
-        isGpsEnabled.postValue(isEnabled)
+        isGpsNeedChecked.postValue(isEnabled)
 
     }
 
@@ -147,6 +147,7 @@ class MainFragment : Fragment() {
     @SuppressLint("MissingPermission")
     private suspend fun checkPermissionLocation(listPermission: Array<String>) {
         var fineResult: PermissionResult? = null
+        var backResult: PermissionResult? = null
         listPermission.forEach { permission ->
             when (permission) {
                 ACCESS_FINE_LOCATION -> {
@@ -159,13 +160,15 @@ class MainFragment : Fragment() {
                 ACCESS_BACKGROUND_LOCATION -> {
                     if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
                         requester.request(permission).collect { result ->
+                            backResult = result
                             getResultBackGroundLocation(result)
                         }
                     }
                     if (
-                        App.needDialogShow &&
-                        (Build.VERSION.SDK_INT != Build.VERSION_CODES.Q) &&
-                        fineResult is PermissionResult.Granted
+                        App.needDialogShow
+                        && (Build.VERSION.SDK_INT != Build.VERSION_CODES.Q)
+                        && fineResult is PermissionResult.Granted
+                        && backResult !is PermissionResult.Granted
                     ) {
                         MaterialAlertDialogBuilder(requireContext())
                             .setCancelable(false)
@@ -184,7 +187,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun getResultFineLocation(result: PermissionResult) {
+    private suspend fun getResultFineLocation(result: PermissionResult) {
         when (result) {
             // Пользователь дал разрешение, можно продолжать работу
             is PermissionResult.Granted -> {
@@ -196,10 +199,17 @@ class MainFragment : Fragment() {
             }
             // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
             is PermissionResult.Denied.DeniedPermanently -> {
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                intent.data = Uri.fromParts("package", requireActivity().packageName, null)
-                requireActivity().startActivity(intent)
+                MaterialAlertDialogBuilder(requireContext())
+                    .setCancelable(false)
+                    .setTitle(requireContext().getString(R.string.dialog__loc_title))
+                    .setMessage(requireContext().getString(R.string.dialog__loc_message))
+                    .setNeutralButton(requireContext().getString(R.string.dialog_back_loc_neutral)) { _, _ ->
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        intent.data = Uri.fromParts("package", requireActivity().packageName, null)
+                        isGpsNeedChecked.value = false
+                        requireActivity().startActivity(intent)
+                    }.show()
             }
 
             // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
@@ -209,7 +219,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun getResultBackGroundLocation(result: PermissionResult) {
+    private suspend fun getResultBackGroundLocation(result: PermissionResult) {
         when (result) {
             // Пользователь дал разрешение, можно продолжать работу
             is PermissionResult.Granted -> {

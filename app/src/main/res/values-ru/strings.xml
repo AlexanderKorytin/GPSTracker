@@ -23,4 +23,6 @@
     <string name="dialog_location_message">Желаете включить? С отключенной настройкой приложение работать не будет!</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
+    <string name="dialog__loc_title">Разрешение на точную геолокацию</string>
+    <string name="dialog__loc_message">Для нормальной работы приложению  необходимо разрешение на доступ к геоданным. Вы будете перенаправлены на экран настроек.</string>
 </resources>
