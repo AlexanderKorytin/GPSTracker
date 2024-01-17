@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Волшебный клубочек</string>
-    <string name="main">главное</string>
-    <string name="settings">настройки</string>
-    <string name="tracks">маршруты</string>
+    <string name="main">Главное</string>
+    <string name="settings">Настройки</string>
+    <string name="tracks">Маршруты</string>
     <string name="sec3">3 секунды</string>
     <string name="sec10">10 секунд</string>
     <string name="sec30">30 секунд</string>
-    <string name="update_time">время обновления</string>
+    <string name="update_time">Время обновления</string>
     <string name="update_time_hint">интервал обновления геолокации</string>
     <string name="locations">настройки геолокации</string>
     <string name="sec">сек</string>
-    <string name="set_color">цвет линии</string>
+    <string name="set_color">Цвет линии</string>
     <string name="color_line_hint">измените цвет линии пути</string>
     <string name="red">красный</string>
     <string name="blue">синий</string>
     <string name="green">зеленый</string>
+    <string name="dialog_back_loc_title">Разрешение на фоновую геолокацию</string>
+    <string name="dialog_back_loc_message">Для записи маршрута при отключено экране необходимо разрешение на доступ к геоданным в фоновом режиме.  Вы будете направлены на экран настроек.</string>
+    <string name="dialog_back_loc_neutral">Хорошо</string>
 </resources>
