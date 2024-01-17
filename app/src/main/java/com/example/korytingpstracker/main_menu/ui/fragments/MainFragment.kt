@@ -15,7 +15,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.example.korytingpstracker.R
 import com.example.korytingpstracker.app.App
@@ -25,6 +24,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.markodevcic.peko.PermissionRequester
 import com.markodevcic.peko.PermissionResult
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
@@ -37,7 +37,14 @@ class MainFragment : Fragment() {
     private val requester = PermissionRequester.instance()
     private lateinit var myLocationNewOverlay: MyLocationNewOverlay
     private lateinit var myGPSProvider: GpsMyLocationProvider
-    private var isGpsNeedChecked: MutableLiveData<Boolean> = MutableLiveData(false)
+    private var isGpsNeedChecked: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    private var fineResult: PermissionResult? = null
+    private var backResult: PermissionResult? = null
+
+    private var isSettLocDialogShowed = false
+    private var isFineLocDialogShowed = false
+    private var isBackLocDialogShowed = false
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,23 +62,20 @@ class MainFragment : Fragment() {
             com.google.android.material.R.anim.abc_fade_in
         )
         binding.root.startAnimation(anim)
-        val locManager =
-            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        isGpsNeedChecked.value = locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        isGpsNeedChecked.observe(viewLifecycleOwner) {
-            if (it) {
-                mainViewModel.getProvider()
-                checkPermission()
-            }
-        }
+        mainViewModel.getProvider()
     }
 
     override fun onResume() {
         super.onResume()
-        if (isGpsNeedChecked.value == false) {
-            isGpsSwitchOn()
-        }
+        val locManager =
+            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        isGpsNeedChecked.value = locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
 
+        lifecycleScope.launch {
+            isGpsNeedChecked.collect {
+                isGpsSwitchOn(isGpsNeedChecked.value)
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -101,31 +105,35 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun isGpsSwitchOn() {
-        val locManager =
-            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        var isEnabled = locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    private fun isGpsSwitchOn(isEnabled: Boolean) {
         if (!isEnabled) {
-            MaterialAlertDialogBuilder(requireContext())
+           val dialog = MaterialAlertDialogBuilder(requireContext())
                 .setCancelable(false)
                 .setTitle(requireContext().getString(R.string.dialog_location_title))
                 .setMessage(requireContext().getString(R.string.dialog_location_message))
                 .setPositiveButton(requireContext().getString(R.string.yes)) { _, _ ->
                     val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    isSettLocDialogShowed = false
                     requireActivity().startActivity(intent)
                 }
                 .setNegativeButton(requireContext().getString(R.string.no)) { _, _ ->
+                    isSettLocDialogShowed = false
                     requireActivity().finish()
-                }.show()
+                }.create()
+            if (!isSettLocDialogShowed) {
+                isSettLocDialogShowed = true
+                dialog.show()
+            }
+        } else {
+            checkPermission()
         }
-        isGpsNeedChecked.postValue(isEnabled)
-
     }
 
     private fun checkPermission() {
         val arrayPermissionResult = mutableListOf<String>()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            arrayPermissionResult.clear()
             arrayPermissionResult.addAll(
                 arrayOf(
                     ACCESS_FINE_LOCATION,
@@ -133,6 +141,7 @@ class MainFragment : Fragment() {
                 )
             )
         } else {
+            arrayPermissionResult.clear()
             arrayPermissionResult.addAll(
                 arrayOf(
                     ACCESS_FINE_LOCATION,
@@ -146,8 +155,6 @@ class MainFragment : Fragment() {
 
     @SuppressLint("MissingPermission")
     private suspend fun checkPermissionLocation(listPermission: Array<String>) {
-        var fineResult: PermissionResult? = null
-        var backResult: PermissionResult? = null
         listPermission.forEach { permission ->
             when (permission) {
                 ACCESS_FINE_LOCATION -> {
@@ -160,27 +167,31 @@ class MainFragment : Fragment() {
                 ACCESS_BACKGROUND_LOCATION -> {
                     if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
                         requester.request(permission).collect { result ->
-                            backResult = result
                             getResultBackGroundLocation(result)
                         }
                     }
                     if (
-                        App.needDialogShow
-                        && (Build.VERSION.SDK_INT != Build.VERSION_CODES.Q)
+                        (Build.VERSION.SDK_INT != Build.VERSION_CODES.Q)
                         && fineResult is PermissionResult.Granted
                         && backResult !is PermissionResult.Granted
                     ) {
-                        MaterialAlertDialogBuilder(requireContext())
+                       val dialog = MaterialAlertDialogBuilder(requireContext())
                             .setCancelable(false)
                             .setTitle(requireContext().getString(R.string.dialog_back_loc_title))
                             .setMessage(requireContext().getString(R.string.dialog_back_loc_message))
                             .setNeutralButton(requireContext().getString(R.string.dialog_back_loc_neutral)) { _, _ ->
+                                isBackLocDialogShowed = false
                                 lifecycleScope.launch(Dispatchers.IO) {
                                     requester.request(permission).collect { result ->
+                                        backResult = result
                                         getResultBackGroundLocation(result)
                                     }
                                 }
-                            }.show()
+                            }
+                        if (!isBackLocDialogShowed){
+                            isBackLocDialogShowed = true
+                            dialog.show()
+                        }
                     }
                 }
             }
@@ -199,17 +210,22 @@ class MainFragment : Fragment() {
             }
             // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
             is PermissionResult.Denied.DeniedPermanently -> {
-                MaterialAlertDialogBuilder(requireContext())
+               val dialog =  MaterialAlertDialogBuilder(requireContext())
                     .setCancelable(false)
                     .setTitle(requireContext().getString(R.string.dialog__loc_title))
                     .setMessage(requireContext().getString(R.string.dialog__loc_message))
                     .setNeutralButton(requireContext().getString(R.string.dialog_back_loc_neutral)) { _, _ ->
                         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        intent.data = Uri.fromParts("package", requireActivity().packageName, null)
-                        isGpsNeedChecked.value = false
+                        intent.data =
+                            Uri.fromParts("package", requireActivity().packageName, null)
+                        isFineLocDialogShowed = false
                         requireActivity().startActivity(intent)
-                    }.show()
+                    }
+                if (!isFineLocDialogShowed){
+                    isFineLocDialogShowed = true
+                    dialog.show()
+                }
             }
 
             // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
@@ -223,8 +239,8 @@ class MainFragment : Fragment() {
         when (result) {
             // Пользователь дал разрешение, можно продолжать работу
             is PermissionResult.Granted -> {
-                App.needDialogShow = false
-                mainViewModel.saveIsNeedShowDialog(App.needDialogShow)
+                App.needBackGroundLocPerm = false
+                mainViewModel.saveIsNeedShowDialog(App.needBackGroundLocPerm)
             }
             //Пользователь отказал в предоставлении разрешения
             is PermissionResult.Denied.NeedsRationale -> {

@@ -16,7 +16,7 @@ const val IS_NEED_SHOW_DIALOG = "is need show dialog"
 
 class App : Application() {
     companion object {
-        var needDialogShow = true
+        var needBackGroundLocPerm = true
     }
 
     override fun onCreate() {
@@ -24,7 +24,7 @@ class App : Application() {
 
         PermissionRequester.initialize(applicationContext)
 
-        needDialogShow =
+        needBackGroundLocPerm =
             getSharedPreferences(APP_SETTINGS_PREF_KEY, AppCompatActivity.MODE_PRIVATE)
                 .getBoolean(IS_NEED_SHOW_DIALOG, true)
 
