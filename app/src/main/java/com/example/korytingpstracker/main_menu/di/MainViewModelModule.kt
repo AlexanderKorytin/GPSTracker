@@ -5,5 +5,5 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val mainVMModule = module {
-    viewModel<MainViewModel> { MainViewModel(interactor = get()) }
+    viewModel<MainViewModel> { MainViewModel(mainInteractor = get(), settingsInteractor = get()) }
 }
