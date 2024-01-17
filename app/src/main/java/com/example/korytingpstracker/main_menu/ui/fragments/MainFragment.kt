@@ -110,12 +110,12 @@ class MainFragment : Fragment() {
                 .setCancelable(false)
                 .setTitle(requireContext().getString(R.string.dialog_location_title))
                 .setMessage(requireContext().getString(R.string.dialog_location_message))
-                .setPositiveButton(requireContext().getString(R.string.yes)) { dialog, which ->
+                .setPositiveButton(requireContext().getString(R.string.yes)) { _, _ ->
                     val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     requireActivity().startActivity(intent)
                 }
-                .setNegativeButton(requireContext().getString(R.string.no)) { dialog, which ->
+                .setNegativeButton(requireContext().getString(R.string.no)) { _, _ ->
                     requireActivity().finish()
                 }.show()
         }
@@ -146,10 +146,12 @@ class MainFragment : Fragment() {
 
     @SuppressLint("MissingPermission")
     private suspend fun checkPermissionLocation(listPermission: Array<String>) {
+        var fineResult: PermissionResult? = null
         listPermission.forEach { permission ->
             when (permission) {
                 ACCESS_FINE_LOCATION -> {
                     requester.request(permission).collect { result ->
+                        fineResult = result
                         getResultFineLocation(result)
                     }
                 }
@@ -160,16 +162,18 @@ class MainFragment : Fragment() {
                             getResultBackGroundLocation(result)
                         }
                     }
-                    if (App.needDialogShow && (Build.VERSION.SDK_INT != Build.VERSION_CODES.Q)) {
+                    if (
+                        App.needDialogShow &&
+                        (Build.VERSION.SDK_INT != Build.VERSION_CODES.Q) &&
+                        fineResult is PermissionResult.Granted
+                    ) {
                         MaterialAlertDialogBuilder(requireContext())
                             .setCancelable(false)
                             .setTitle(requireContext().getString(R.string.dialog_back_loc_title))
                             .setMessage(requireContext().getString(R.string.dialog_back_loc_message))
-                            .setNeutralButton(requireContext().getString(R.string.dialog_back_loc_neutral)) { dialog, which ->
+                            .setNeutralButton(requireContext().getString(R.string.dialog_back_loc_neutral)) { _, _ ->
                                 lifecycleScope.launch(Dispatchers.IO) {
                                     requester.request(permission).collect { result ->
-                                        App.needDialogShow = false
-                                        mainViewModel.saveIsNeedShowDialog(App.needDialogShow)
                                         getResultBackGroundLocation(result)
                                     }
                                 }
@@ -187,7 +191,9 @@ class MainFragment : Fragment() {
                 initOsm()
             }
             //Пользователь отказал в предоставлении разрешения
-            is PermissionResult.Denied -> {}
+            is PermissionResult.Denied.NeedsRationale -> {
+
+            }
             // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
             is PermissionResult.Denied.DeniedPermanently -> {
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
@@ -196,9 +202,6 @@ class MainFragment : Fragment() {
                 requireActivity().startActivity(intent)
             }
 
-            is PermissionResult.Denied.NeedsRationale -> {
-
-            }
             // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
             is PermissionResult.Cancelled -> {
                 return
@@ -214,10 +217,11 @@ class MainFragment : Fragment() {
                 mainViewModel.saveIsNeedShowDialog(App.needDialogShow)
             }
             //Пользователь отказал в предоставлении разрешения
-            is PermissionResult.Denied -> {
+            is PermissionResult.Denied.NeedsRationale -> {
+
             }
             // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
-            is PermissionResult.Denied.NeedsRationale -> {
+            is PermissionResult.Denied.DeniedPermanently -> {
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 intent.data = Uri.fromParts("package", requireActivity().packageName, null)
