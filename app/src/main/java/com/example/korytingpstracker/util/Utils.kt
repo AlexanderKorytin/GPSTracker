@@ -1,9 +1,14 @@
 package com.example.korytingpstracker.util
 
+import android.annotation.SuppressLint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+import java.util.TimeZone
 
 fun <T> debounce(delayMillis: Long,
                  coroutineScope: CoroutineScope,
@@ -21,4 +26,13 @@ fun <T> debounce(delayMillis: Long,
             }
         }
     }
+}
+
+@SuppressLint("SimpleDateFormat")
+fun getTime(timeInMillis: Long): String{
+    val formater = SimpleDateFormat("HH:mm:ss")
+    formater.timeZone = TimeZone.getTimeZone("UTC")
+    val calendar = Calendar.getInstance()
+    calendar.timeInMillis = timeInMillis
+   return formater.format(calendar.time)
 }
