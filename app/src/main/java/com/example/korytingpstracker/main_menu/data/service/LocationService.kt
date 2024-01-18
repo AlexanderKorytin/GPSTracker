@@ -13,7 +13,7 @@ import androidx.core.app.ServiceCompat
 import com.example.korytingpstracker.R
 import com.example.korytingpstracker.core.ui.MainActivity
 
-class LocationService: Service() {
+class LocationService : Service() {
 
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -34,6 +34,7 @@ class LocationService: Service() {
     override fun onDestroy() {
         super.onDestroy()
         isRaning = false
+        startTime = 0L
         Log.d("MyLog", "onDestroy")
     }
 
@@ -47,8 +48,10 @@ class LocationService: Service() {
         nManager.createNotificationChannel(notificationChanel)
         val mIntent = Intent(this, MainActivity::class.java)
         val pandingIntent =
-            PendingIntent.getActivity(this, REQUEST_CODE, mIntent,
-                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.getActivity(
+                this, REQUEST_CODE, mIntent,
+                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
         val notification = NotificationCompat
             .Builder(this, CHANEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher)
@@ -56,15 +59,26 @@ class LocationService: Service() {
             .setContentIntent(pandingIntent)
             .setOngoing(true)
             .build()
-        ServiceCompat.startForeground(this, REQUEST_CODE, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION)
+        ServiceCompat.startForeground(
+            this,
+            REQUEST_CODE,
+            notification,
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+        )
     }
 
     companion object {
-        fun getStateSeervice(): Boolean {
-            return isRaning
+        private var isRaning = false
+        fun getStateSeervice(): Boolean = isRaning
+
+        private var startTime = 0L
+        fun getStartTime(): Long = startTime
+        fun setStartTime(time: Long) {
+            startTime = time
         }
+
         const val CHANEL_ID = "chanel_kolobok"
         const val REQUEST_CODE = 10
-        private var isRaning = false
+
     }
 }

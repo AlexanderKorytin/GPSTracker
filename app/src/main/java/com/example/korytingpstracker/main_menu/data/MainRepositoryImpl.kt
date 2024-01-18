@@ -15,4 +15,10 @@ class MainRepositoryImpl(
     override fun getLocationServiceState(): Boolean {
         return LocationService.getStateSeervice()
     }
+
+    override fun setStartTime(time: Long) {
+        LocationService.setStartTime(time)
+    }
+
+    override fun getStartTime(): Long = LocationService.getStartTime()
 }

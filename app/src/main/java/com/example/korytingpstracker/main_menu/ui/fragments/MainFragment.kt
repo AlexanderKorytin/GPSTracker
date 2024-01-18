@@ -31,8 +31,6 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
-import java.util.Timer
-import java.util.TimerTask
 
 class MainFragment : Fragment() {
     private var isServiceLocRunning = false
@@ -279,14 +277,16 @@ class MainFragment : Fragment() {
         )
     }
 
-    private fun updateTime(){
-        mainViewModel.getCurrentTime().observe(viewLifecycleOwner){
-            binding.time.setText("${binding.time.text.split(':')[0]}: ${it}")
+    private fun updateTime() {
+        mainViewModel.getCurrentTime().observe(viewLifecycleOwner) {
+            binding.time.text = "${binding.time.text.split(':')[0]}: ${it}"
         }
     }
+
     private fun startStopServise() {
         if (!isServiceLocRunning) {
             startLocService()
+            mainViewModel.setStartTime()
             mainViewModel.startTimer()
             binding.startStop.setImageResource(R.drawable.ic_stop)
         } else {
@@ -303,6 +303,7 @@ class MainFragment : Fragment() {
             isServiceLocRunning = it
             if (isServiceLocRunning) {
                 binding.startStop.setImageResource(R.drawable.ic_stop)
+                mainViewModel.startTimer()
             } else {
                 binding.startStop.setImageResource(R.drawable.ic_play)
             }

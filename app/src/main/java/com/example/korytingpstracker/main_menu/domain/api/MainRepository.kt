@@ -8,4 +8,8 @@ interface MainRepository {
     fun getLocationProvider(): GpsMyLocationProvider
 
     fun getLocationServiceState(): Boolean
+
+    fun setStartTime(time: Long)
+
+    fun getStartTime(): Long
 }

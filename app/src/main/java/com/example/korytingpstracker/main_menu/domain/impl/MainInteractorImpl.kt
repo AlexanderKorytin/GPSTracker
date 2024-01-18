@@ -16,4 +16,10 @@ class MainInteractorImpl(private val repository: MainRepository) : MainInteracto
         return repository.getLocationServiceState()
     }
 
+    override fun setStartTime(time: Long) {
+        repository.setStartTime(time)
+    }
+
+    override fun getStartTime(): Long = repository.getStartTime()
+
 }

@@ -7,13 +7,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 import java.util.TimeZone
 
-fun <T> debounce(delayMillis: Long,
-                 coroutineScope: CoroutineScope,
-                 useLastParam: Boolean,
-                 action: (T) -> Unit): (T) -> Unit {
+fun <T> debounce(
+    delayMillis: Long,
+    coroutineScope: CoroutineScope,
+    useLastParam: Boolean,
+    action: (T) -> Unit
+): (T) -> Unit {
     var debounceJob: Job? = null
     return { param: T ->
         if (useLastParam) {
@@ -29,10 +30,10 @@ fun <T> debounce(delayMillis: Long,
 }
 
 @SuppressLint("SimpleDateFormat")
-fun getTime(timeInMillis: Long): String{
+fun getTime(timeInMillis: Long): String {
     val formater = SimpleDateFormat("HH:mm:ss")
     formater.timeZone = TimeZone.getTimeZone("UTC")
     val calendar = Calendar.getInstance()
     calendar.timeInMillis = timeInMillis
-   return formater.format(calendar.time)
+    return formater.format(calendar.time)
 }

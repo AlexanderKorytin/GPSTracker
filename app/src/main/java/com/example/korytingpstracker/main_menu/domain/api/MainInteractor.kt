@@ -8,4 +8,8 @@ interface MainInteractor {
     fun getLocationProvider(): LocationProvider
 
     fun getStateSeervice(): Boolean
+
+    fun setStartTime(time: Long)
+
+    fun getStartTime(): Long
 }

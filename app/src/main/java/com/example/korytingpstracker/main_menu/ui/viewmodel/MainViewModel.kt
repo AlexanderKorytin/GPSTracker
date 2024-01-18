@@ -21,7 +21,7 @@ class MainViewModel(
     private var timer: Timer? = null
     private var startTime = 0L
 
-    private val currentTime: MutableLiveData<String>  = MutableLiveData()
+    private val currentTime: MutableLiveData<String> = MutableLiveData()
     fun getCurrentTime(): LiveData<String> = currentTime
 
     private var locationProvider: MutableLiveData<GpsMyLocationProvider> = MutableLiveData(null)
@@ -35,7 +35,7 @@ class MainViewModel(
         mainInteractor.configureMap()
     }
 
-    fun checkedLocationServiceState(){
+    fun checkedLocationServiceState() {
         stateLocService.value = (mainInteractor.getStateSeervice())
     }
 
@@ -47,11 +47,15 @@ class MainViewModel(
         locationProvider.postValue(mainInteractor.getLocationProvider().provider)
     }
 
-    fun startTimer(){
+    fun setStartTime() {
+        mainInteractor.setStartTime(System.currentTimeMillis())
+    }
+
+    fun startTimer() {
         timer?.cancel()
-        startTime = System.currentTimeMillis()
+        startTime = mainInteractor.getStartTime()
         timer = Timer()
-        timer?.schedule(object: TimerTask(){
+        timer?.schedule(object : TimerTask() {
             override fun run() {
                 viewModelScope.launch(Dispatchers.Main) {
                     currentTime.value = getTime(System.currentTimeMillis() - startTime)
@@ -61,7 +65,7 @@ class MainViewModel(
         }, 1000L, 1000L)
     }
 
-    fun stopTimer(){
+    fun stopTimer() {
         timer?.cancel()
     }
 }
