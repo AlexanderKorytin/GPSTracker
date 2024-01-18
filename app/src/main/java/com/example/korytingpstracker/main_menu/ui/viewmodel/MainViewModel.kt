@@ -11,11 +11,20 @@ class MainViewModel(
     private val mainInteractor: MainInteractor,
     private val settingsInteractor: SettingsInteractor
 ) : ViewModel() {
-    private var locationProvider: MutableLiveData<GpsMyLocationProvider> = MutableLiveData(null)
 
+    private var locationProvider: MutableLiveData<GpsMyLocationProvider> = MutableLiveData(null)
     fun getLocationProviderValue(): LiveData<GpsMyLocationProvider> = locationProvider
+
+    private var stateLocService: MutableLiveData<Boolean> = MutableLiveData(false)
+
+    fun getStateService(): LiveData<Boolean> = stateLocService
+
     fun configureMap() {
         mainInteractor.configureMap()
+    }
+
+    fun checkedLocationServiceState(){
+        stateLocService.value = (mainInteractor.getStateSeervice())
     }
 
     fun saveIsNeedShowDialog(isNeed: Boolean) {

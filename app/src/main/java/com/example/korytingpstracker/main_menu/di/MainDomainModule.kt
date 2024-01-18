@@ -1,6 +1,6 @@
 package com.example.korytingpstracker.main_menu.di
 
-import com.example.korytingpstracker.main_menu.data.network.MainRepositoryImpl
+import com.example.korytingpstracker.main_menu.data.MainRepositoryImpl
 import com.example.korytingpstracker.main_menu.domain.api.MainInteractor
 import com.example.korytingpstracker.main_menu.domain.api.MainRepository
 import com.example.korytingpstracker.main_menu.domain.impl.MainInteractorImpl

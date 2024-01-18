@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.fragment.app.Fragment
@@ -19,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.korytingpstracker.R
 import com.example.korytingpstracker.app.App
 import com.example.korytingpstracker.databinding.FragmentMainBinding
+import com.example.korytingpstracker.main_menu.data.service.LocationService
 import com.example.korytingpstracker.main_menu.ui.viewmodel.MainViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.markodevcic.peko.PermissionRequester
@@ -31,6 +33,7 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
 class MainFragment : Fragment() {
+    private var isServiceLocRunning = false
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
     private val mainViewModel by viewModel<MainViewModel>()
@@ -61,6 +64,8 @@ class MainFragment : Fragment() {
             requireContext(),
             com.google.android.material.R.anim.abc_fade_in
         )
+        setOnClicks()
+        checkLocationServiseState()
         binding.root.startAnimation(anim)
         mainViewModel.getProvider()
     }
@@ -107,7 +112,7 @@ class MainFragment : Fragment() {
 
     private fun isGpsSwitchOn(isEnabled: Boolean) {
         if (!isEnabled) {
-           val dialog = MaterialAlertDialogBuilder(requireContext())
+            val dialog = MaterialAlertDialogBuilder(requireContext())
                 .setCancelable(false)
                 .setTitle(requireContext().getString(R.string.dialog_location_title))
                 .setMessage(requireContext().getString(R.string.dialog_location_message))
@@ -175,7 +180,7 @@ class MainFragment : Fragment() {
                         && fineResult is PermissionResult.Granted
                         && backResult !is PermissionResult.Granted
                     ) {
-                       val dialog = MaterialAlertDialogBuilder(requireContext())
+                        val dialog = MaterialAlertDialogBuilder(requireContext())
                             .setCancelable(false)
                             .setTitle(requireContext().getString(R.string.dialog_back_loc_title))
                             .setMessage(requireContext().getString(R.string.dialog_back_loc_message))
@@ -188,7 +193,7 @@ class MainFragment : Fragment() {
                                     }
                                 }
                             }
-                        if (!isBackLocDialogShowed){
+                        if (!isBackLocDialogShowed) {
                             isBackLocDialogShowed = true
                             dialog.show()
                         }
@@ -210,7 +215,7 @@ class MainFragment : Fragment() {
             }
             // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
             is PermissionResult.Denied.DeniedPermanently -> {
-               val dialog =  MaterialAlertDialogBuilder(requireContext())
+                val dialog = MaterialAlertDialogBuilder(requireContext())
                     .setCancelable(false)
                     .setTitle(requireContext().getString(R.string.dialog__loc_title))
                     .setMessage(requireContext().getString(R.string.dialog__loc_message))
@@ -222,7 +227,7 @@ class MainFragment : Fragment() {
                         isFineLocDialogShowed = false
                         requireActivity().startActivity(intent)
                     }
-                if (!isFineLocDialogShowed){
+                if (!isFineLocDialogShowed) {
                     isFineLocDialogShowed = true
                     dialog.show()
                 }
@@ -241,6 +246,7 @@ class MainFragment : Fragment() {
             is PermissionResult.Granted -> {
                 App.needBackGroundLocPerm = false
                 mainViewModel.saveIsNeedShowDialog(App.needBackGroundLocPerm)
+
             }
             //Пользователь отказал в предоставлении разрешения
             is PermissionResult.Denied.NeedsRationale -> {
@@ -260,5 +266,51 @@ class MainFragment : Fragment() {
         }
     }
 
+    private fun startLocService() {
+        requireContext().startForegroundService(
+            Intent(
+                requireContext(),
+                LocationService::class.java
+            )
+        )
+    }
+
+    private fun startStopServise() {
+        if (!isServiceLocRunning) {
+            startLocService()
+            binding.startStop.setImageResource(R.drawable.ic_stop)
+        } else {
+            activity?.stopService(Intent(activity, LocationService::class.java))
+            binding.startStop.setImageResource(R.drawable.ic_play)
+        }
+        isServiceLocRunning = !isServiceLocRunning
+    }
+
+    private fun checkLocationServiseState() {
+        mainViewModel.checkedLocationServiceState()
+        mainViewModel.getStateService().observe(viewLifecycleOwner) {
+            isServiceLocRunning = it
+            if (isServiceLocRunning) {
+                binding.startStop.setImageResource(R.drawable.ic_stop)
+            } else {
+                binding.startStop.setImageResource(R.drawable.ic_play)
+            }
+        }
+    }
+
+    fun setOnClicks() = with(binding) {
+        val listner = onClick()
+        startStop.setOnClickListener(listner)
+    }
+
+    private fun onClick(): OnClickListener {
+        return OnClickListener {
+            when (it.id) {
+                R.id.start_stop -> {
+                    startStopServise()
+                }
+            }
+        }
+    }
 
 }

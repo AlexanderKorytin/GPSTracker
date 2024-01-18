@@ -6,4 +6,6 @@ interface MainInteractor {
     fun configureMap()
 
     fun getLocationProvider(): LocationProvider
+
+    fun getStateSeervice(): Boolean
 }

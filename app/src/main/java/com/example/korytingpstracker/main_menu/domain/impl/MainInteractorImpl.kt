@@ -12,4 +12,8 @@ class MainInteractorImpl(private val repository: MainRepository) : MainInteracto
     override fun getLocationProvider(): LocationProvider =
         LocationProvider(repository.getLocationProvider())
 
+    override fun getStateSeervice(): Boolean {
+        return repository.getLocationServiceState()
+    }
+
 }

@@ -18,11 +18,11 @@
     <string name="blue">синий</string>
     <string name="green">зеленый</string>
     <string name="dialog_back_loc_title">Разрешение на фоновую геолокацию</string>
-    <string name="dialog_back_loc_message">Для записи маршрута при отключено экране необходимо разрешение на доступ к геоданным в фоновом режиме.  Вы будете направлены на экран настроек.</string>
     <string name="dialog_back_loc_neutral">Хорошо</string>
     <string name="dialog_location_message">Желаете включить? С отключенной настройкой приложение работать не будет!</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
+    <string name="dialog_back_loc_message">Для записи маршрутов в фоновом режиме, приложению необходимо разрешение на доступ к геоданным в фоновом режиме. Если такое разрешение не выдано  - вы будете перенаправлены на экран настроек.</string>
     <string name="dialog__loc_title">Разрешение на точную геолокацию</string>
     <string name="dialog__loc_message">Для нормальной работы приложению  необходимо разрешение на доступ к геоданным. Вы будете перенаправлены на экран настроек.</string>
 </resources>

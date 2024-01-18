@@ -6,4 +6,6 @@ interface MainRepository {
     fun configureMap()
 
     fun getLocationProvider(): GpsMyLocationProvider
+
+    fun getLocationServiceState(): Boolean
 }
