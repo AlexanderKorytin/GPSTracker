@@ -24,6 +24,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.markodevcic.peko.PermissionRequester
 import com.markodevcic.peko.PermissionResult
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
@@ -110,7 +111,7 @@ class MainFragment : Fragment() {
                 )
             )
         }
-        lifecycleScope.launch {
+        lifecycleScope.launch(Dispatchers.Main) {
             checkPermissionLocation(arrayPermissionResult.toTypedArray())
         }
     }
@@ -144,11 +145,15 @@ class MainFragment : Fragment() {
                             .setMessage(requireContext().getString(R.string.dialog_back_loc_message))
                             .setNeutralButton(requireContext().getString(R.string.dialog_back_loc_neutral)) { _, _ ->
                                 isBackLocDialogShowed = false
-                                lifecycleScope.launch(Dispatchers.IO) {
-                                    requester.request(permission).collect { result ->
-                                        backResult = result
-                                        getResultBackGroundLocation(result)
+                                try {
+                                    lifecycleScope.async(Dispatchers.IO) {
+                                        requester.request(permission).collect { result ->
+                                            backResult = result
+                                            getResultBackGroundLocation(result)
+                                        }
                                     }
+                                } catch (e: IllegalStateException) {
+                                    checkPermission()
                                 }
                             }
                         if (!isBackLocDialogShowed) {
@@ -161,7 +166,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    private suspend fun getResultFineLocation(result: PermissionResult) {
+    private fun getResultFineLocation(result: PermissionResult) {
         when (result) {
             // Пользователь дал разрешение, можно продолжать работу
             is PermissionResult.Granted -> {
@@ -191,13 +196,12 @@ class MainFragment : Fragment() {
         }
     }
 
-    private suspend fun getResultBackGroundLocation(result: PermissionResult) {
+    private fun getResultBackGroundLocation(result: PermissionResult) {
         when (result) {
             // Пользователь дал разрешение, можно продолжать работу
             is PermissionResult.Granted -> {
                 App.needBackGroundLocPerm = false
                 mainViewModel.saveIsNeedShowDialog(App.needBackGroundLocPerm)
-
             }
             //Пользователь отказал в предоставлении разрешения
             is PermissionResult.Denied.NeedsRationale -> {
