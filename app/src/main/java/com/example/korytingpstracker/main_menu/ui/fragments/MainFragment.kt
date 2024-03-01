@@ -2,7 +2,6 @@ package com.example.korytingpstracker.main_menu.ui.fragments
 
 import android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -13,6 +12,7 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.korytingpstracker.R
@@ -24,6 +24,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.markodevcic.peko.PermissionRequester
 import com.markodevcic.peko.PermissionResult
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -40,7 +41,6 @@ class MainFragment : Fragment() {
     private lateinit var myGPSProvider: GpsMyLocationProvider
     private var fineResult: PermissionResult? = null
     private var backResult: PermissionResult? = null
-    private var isFineLocDialogShowed = false
     private var isBackLocDialogShowed = false
 
     override fun onCreateView(
@@ -95,28 +95,26 @@ class MainFragment : Fragment() {
 
     private fun checkPermission() {
         val arrayPermissionResult = mutableListOf<String>()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            arrayPermissionResult.clear()
-            arrayPermissionResult.addAll(
-                arrayOf(
-                    ACCESS_FINE_LOCATION,
-                    ACCESS_BACKGROUND_LOCATION,
-                )
+        arrayPermissionResult.clear()
+        arrayPermissionResult.addAll(
+            arrayOf(
+                ACCESS_FINE_LOCATION,
+                ACCESS_BACKGROUND_LOCATION,
             )
-        } else {
-            arrayPermissionResult.clear()
-            arrayPermissionResult.addAll(
-                arrayOf(
-                    ACCESS_FINE_LOCATION,
-                )
-            )
-        }
-        lifecycleScope.launch(Dispatchers.Main) {
-            checkPermissionLocation(arrayPermissionResult.toTypedArray())
+        )
+        lifecycleScope.launch(Dispatchers.Main + SupervisorJob()) {
+            val defer = lifecycleScope.async {
+                checkPermissionLocation(arrayPermissionResult.toTypedArray())
+            }
+            try {
+                defer.await()
+            } catch (e: IllegalStateException) {
+                Toast.makeText(requireContext(), "", Toast.LENGTH_LONG).show()
+                requireActivity().finish()
+            }
         }
     }
 
-    @SuppressLint("MissingPermission")
     private suspend fun checkPermissionLocation(listPermission: Array<String>) {
         listPermission.forEach { permission ->
             when (permission) {
@@ -145,15 +143,11 @@ class MainFragment : Fragment() {
                             .setMessage(requireContext().getString(R.string.dialog_back_loc_message))
                             .setNeutralButton(requireContext().getString(R.string.dialog_back_loc_neutral)) { _, _ ->
                                 isBackLocDialogShowed = false
-                                try {
-                                    lifecycleScope.async(Dispatchers.IO) {
-                                        requester.request(permission).collect { result ->
-                                            backResult = result
-                                            getResultBackGroundLocation(result)
-                                        }
+                                lifecycleScope.launch {
+                                    requester.request(permission).collect { result ->
+                                        backResult = result
+                                        getResultBackGroundLocation(result)
                                     }
-                                } catch (e: IllegalStateException) {
-                                    checkPermission()
                                 }
                             }
                         if (!isBackLocDialogShowed) {
