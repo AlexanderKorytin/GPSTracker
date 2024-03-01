@@ -1,20 +1,65 @@
 package com.example.korytingpstracker.main_menu.data.service
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
+import android.location.Location
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.korytingpstracker.R
 import com.example.korytingpstracker.core.ui.MainActivity
+import com.example.korytingpstracker.main_menu.data.dto.LocationDto
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import org.osmdroid.util.GeoPoint
 
 class LocationService : Service() {
+    private var lastLocation: Location? = null
+    private var distance = 0.0f
+    private lateinit var locProvider: FusedLocationProviderClient
+    private lateinit var locRequest: LocationRequest
+    private lateinit var geoPointList: ArrayList<GeoPoint>
 
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(locResult: LocationResult) {
+            super.onLocationResult(locResult)
+            val currentLocation = locResult.lastLocation
+            if (lastLocation != null && currentLocation != null) {
+                if (currentLocation.speed > ERROR_BOUNDARY_SPEED) {
+                    distance += currentLocation.let { lastLocation?.distanceTo(it) } ?: 0.0f
+                    geoPointList.add(GeoPoint(currentLocation.latitude, currentLocation.longitude))
+                    val locData = LocationDto(
+                        speed = currentLocation.speed,
+                        distance = distance,
+                        geoPointList = geoPointList
+                    )
+                    sendLocationData(locData)
+                }
+            }
+            lastLocation = currentLocation
+            Log.d("MyLog", "Distance: ${distance}")
+        }
+    }
+
+    private fun sendLocationData(locData: LocationDto) {
+        val intent = Intent(LOC_INTENT)
+        intent.putExtra(LOC_INTENT, locData)
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
+    }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -23,19 +68,21 @@ class LocationService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         stratNotification()
         isRaning = true
+        startLocationUpdates()
         return START_STICKY
     }
 
     override fun onCreate() {
         super.onCreate()
-        Log.d("MyLog", "onCreate")
+        geoPointList = arrayListOf()
+        initLocation()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         isRaning = false
         startTime = 0L
-        Log.d("MyLog", "onDestroy")
+        locProvider.removeLocationUpdates(locationCallback)
     }
 
     private fun stratNotification() {
@@ -67,6 +114,24 @@ class LocationService : Service() {
         )
     }
 
+    private fun initLocation() {
+        locRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000)
+            .setMinUpdateIntervalMillis(5000)
+            .build()
+        locProvider = LocationServices.getFusedLocationProviderClient(baseContext)
+    }
+
+    private fun startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+        locProvider.requestLocationUpdates(locRequest, locationCallback, Looper.myLooper())
+    }
+
     companion object {
         private var isRaning = false
         fun getStateSeervice(): Boolean = isRaning
@@ -77,8 +142,10 @@ class LocationService : Service() {
             startTime = time
         }
 
-        const val CHANEL_ID = "chanel_kolobok"
-        const val REQUEST_CODE = 10
+        const val LOC_INTENT = " loc intent"
+        private const val CHANEL_ID = "chanel_kolobok"
+        private const val REQUEST_CODE = 10
+        private const val ERROR_BOUNDARY_SPEED = 0.2f
 
     }
 }
