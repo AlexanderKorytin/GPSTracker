@@ -26,8 +26,10 @@ class MainViewModel(
     private val settingsInteractor: SettingsInteractor
 ) : ViewModel() {
 
+    private val correction = 1000
     private var timer: Timer? = null
     private var startTime = 0L
+    private var currentTime = 0L
     private var _screenState: MutableLiveData<MainMenuScreenState> = MutableLiveData()
     val screenState = _screenState
     private val _currentTime: MutableLiveData<String> = MutableLiveData()
@@ -46,16 +48,18 @@ class MainViewModel(
                 val locData = intent.getSerializableExtra(LocationService.LOC_INTENT) as LocationDto
                 _screenState.postValue(
                     MainMenuScreenState.Content(
-                        locData.speed,
-                        locData.distance,
-                        locData.geoPointList
+                        speed = locData.speed,
+                        distance = locData.distance,
+                        averageSpeed = (locData.distance / correction) / (currentTime / correction),
+                        geoPointList = locData.geoPointList,
                     )
                 )
             }
         }
     }
+
     // очищаем данные геолокации данного сеанса работы сервиса
-    fun clearLocData(){
+    fun clearLocData() {
         _screenState.postValue(MainMenuScreenState.Content())
     }
 
@@ -95,8 +99,9 @@ class MainViewModel(
         timer = Timer()
         timer?.schedule(object : TimerTask() {
             override fun run() {
+                currentTime = System.currentTimeMillis() - startTime
                 viewModelScope.launch(Dispatchers.Main) {
-                    _currentTime.value = getTime(System.currentTimeMillis() - startTime)
+                    _currentTime.value = getTime(currentTime)
                 }
             }
 

@@ -70,7 +70,7 @@ class MainFragment : Fragment() {
         mainViewModel.screenState.observe(viewLifecycleOwner) {
             when (it) {
                 is MainMenuScreenState.Content -> {
-                    processingResult(it.speed, it.distance, it.geoPointList)
+                    processingResult(it.speed, it.distance, it.averageSpeed, it.geoPointList)
                 }
             }
         }
@@ -285,8 +285,15 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun processingResult(speed: Float, distance: Float, geoPointsList: List<GeoPoint>) {
+    private fun processingResult(
+        speed: Float,
+        distance: Float,
+        averageSpeed: Float,
+        geoPointsList: List<GeoPoint>
+    ) {
         binding.speed.text = "${binding.speed.text.split(':')[0]}: ${speed} km/h"
         binding.distance.text = "${binding.distance.text.split(':')[0]}: ${distance.toInt()} m"
+        binding.averageSpeed.text =
+            "${binding.averageSpeed.text.split(':')[0]}: ${averageSpeed} km/h"
     }
 }
