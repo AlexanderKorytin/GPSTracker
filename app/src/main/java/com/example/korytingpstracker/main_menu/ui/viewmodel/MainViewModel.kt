@@ -1,10 +1,18 @@
 package com.example.korytingpstracker.main_menu.ui.viewmodel
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.example.korytingpstracker.main_menu.data.dto.LocationDto
+import com.example.korytingpstracker.main_menu.data.service.LocationService
 import com.example.korytingpstracker.main_menu.domain.api.MainInteractor
+import com.example.korytingpstracker.main_menu.ui.models.MainMenuScreenState
 import com.example.korytingpstracker.settings.ui.domain.api.SettingsInteractor
 import com.example.korytingpstracker.util.getTime
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +28,8 @@ class MainViewModel(
 
     private var timer: Timer? = null
     private var startTime = 0L
-
+    private var _screenState: MutableLiveData<MainMenuScreenState> = MutableLiveData()
+    val screenState = _screenState
     private val currentTime: MutableLiveData<String> = MutableLiveData()
     fun getCurrentTime(): LiveData<String> = currentTime
 
@@ -30,6 +39,31 @@ class MainViewModel(
     private var stateLocService: MutableLiveData<Boolean> = MutableLiveData(false)
 
     fun getStateService(): LiveData<Boolean> = stateLocService
+
+    private val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == LocationService.LOC_INTENT) {
+                val locData = intent.getSerializableExtra(LocationService.LOC_INTENT) as LocationDto
+                _screenState.postValue(
+                    MainMenuScreenState.Content(
+                        locData.speed,
+                        locData.distance,
+                        locData.geoPointList
+                    )
+                )
+            }
+        }
+    }
+
+    fun registeringRecevier(context: Context) {
+        LocalBroadcastManager.getInstance(context)
+            .registerReceiver(receiver, IntentFilter(LocationService.LOC_INTENT))
+    }
+
+    fun unRegisteringRecevier(context: Context) {
+        LocalBroadcastManager.getInstance(context)
+            .unregisterReceiver(receiver)
+    }
 
     fun configureMap() {
         mainInteractor.configureMap()

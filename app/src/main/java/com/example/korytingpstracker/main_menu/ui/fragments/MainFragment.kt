@@ -19,6 +19,7 @@ import com.example.korytingpstracker.R
 import com.example.korytingpstracker.app.App
 import com.example.korytingpstracker.databinding.FragmentMainBinding
 import com.example.korytingpstracker.main_menu.data.service.LocationService
+import com.example.korytingpstracker.main_menu.ui.models.MainMenuScreenState
 import com.example.korytingpstracker.main_menu.ui.viewmodel.MainViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.markodevcic.peko.PermissionRequester
@@ -28,6 +29,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
@@ -64,6 +66,14 @@ class MainFragment : Fragment() {
         mainViewModel.getProvider()
         updateTime()
         checkPermission()
+        mainViewModel.registeringRecevier(requireContext())
+        mainViewModel.screenState.observe(viewLifecycleOwner) {
+            when (it) {
+                is MainMenuScreenState.Content -> {
+                    processingResult(it.speed, it.distance, it.geoPointList)
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -73,6 +83,7 @@ class MainFragment : Fragment() {
             com.google.android.material.R.anim.abc_fade_out
         )
         binding.root.startAnimation(anim)
+        mainViewModel.unRegisteringRecevier(requireContext())
         _binding = null
     }
 
@@ -273,4 +284,8 @@ class MainFragment : Fragment() {
         }
     }
 
+    private fun processingResult(speed: Float, distance: Float, geoPointsList: List<GeoPoint>) {
+        binding.speed.text = "${binding.speed.text.split(':')[0]}: ${speed} km/h"
+        binding.distance.text = "${binding.distance.text.split(':')[0]}: ${distance.toInt()} km"
+    }
 }
