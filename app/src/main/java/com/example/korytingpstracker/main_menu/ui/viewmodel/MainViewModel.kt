@@ -30,8 +30,8 @@ class MainViewModel(
     private var startTime = 0L
     private var _screenState: MutableLiveData<MainMenuScreenState> = MutableLiveData()
     val screenState = _screenState
-    private val currentTime: MutableLiveData<String> = MutableLiveData()
-    fun getCurrentTime(): LiveData<String> = currentTime
+    private val _currentTime: MutableLiveData<String> = MutableLiveData()
+    fun getCurrentTime(): LiveData<String> = _currentTime
 
     private var locationProvider: MutableLiveData<GpsMyLocationProvider> = MutableLiveData(null)
     fun getLocationProviderValue(): LiveData<GpsMyLocationProvider> = locationProvider
@@ -53,6 +53,10 @@ class MainViewModel(
                 )
             }
         }
+    }
+    // очищаем данные геолокации данного сеанса работы сервиса
+    fun clearLocData(){
+        _screenState.postValue(MainMenuScreenState.Content())
     }
 
     fun registeringRecevier(context: Context) {
@@ -92,7 +96,7 @@ class MainViewModel(
         timer?.schedule(object : TimerTask() {
             override fun run() {
                 viewModelScope.launch(Dispatchers.Main) {
-                    currentTime.value = getTime(System.currentTimeMillis() - startTime)
+                    _currentTime.value = getTime(System.currentTimeMillis() - startTime)
                 }
             }
 

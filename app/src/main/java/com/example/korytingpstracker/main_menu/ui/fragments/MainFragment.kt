@@ -248,6 +248,7 @@ class MainFragment : Fragment() {
             mainViewModel.setStartTime()
             mainViewModel.startTimer()
             binding.startStop.setImageResource(R.drawable.ic_stop)
+            mainViewModel.clearLocData()
         } else {
             activity?.stopService(Intent(activity, LocationService::class.java))
             mainViewModel.stopTimer()
@@ -286,6 +287,6 @@ class MainFragment : Fragment() {
 
     private fun processingResult(speed: Float, distance: Float, geoPointsList: List<GeoPoint>) {
         binding.speed.text = "${binding.speed.text.split(':')[0]}: ${speed} km/h"
-        binding.distance.text = "${binding.distance.text.split(':')[0]}: ${distance.toInt()} km"
+        binding.distance.text = "${binding.distance.text.split(':')[0]}: ${distance.toInt()} m"
     }
 }
