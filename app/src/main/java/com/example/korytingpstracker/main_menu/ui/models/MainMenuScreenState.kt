@@ -6,6 +6,6 @@ sealed interface MainMenuScreenState {
     data class Content(
         val speed: Float = 0f,
         val distance: Float = 0f,
-        val geoPointList: ArrayList<GeoPoint>
+        val geoPointList: List<GeoPoint> = emptyList()
     ): MainMenuScreenState
 }
