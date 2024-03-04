@@ -12,7 +12,6 @@ import com.example.korytingpstracker.settings.ui.models.AppSettingsPrefKeys
 
 class SettingsFragment : PreferenceFragmentCompat() {
     private val separator = ':'
-
     private var _fragmentView: View? = null
     private val fragmentView get() = _fragmentView!!
     private lateinit var timePref: Preference
