@@ -26,7 +26,8 @@ class MainViewModel(
     private val settingsInteractor: SettingsInteractor
 ) : ViewModel() {
 
-    private val correction = 1000
+    private val correctionDistance = 1000f
+    private val correctionTime = 3_600_000f
     private var timer: Timer? = null
     private var startTime = 0L
     private var currentTime = 0L
@@ -50,7 +51,7 @@ class MainViewModel(
                     MainMenuScreenState.Content(
                         speed = locData.speed,
                         distance = locData.distance,
-                        averageSpeed = (locData.distance / correction) / (currentTime / correction),
+                        averageSpeed = (locData.distance / correctionDistance) / (currentTime / correctionTime),
                         geoPointList = locData.geoPointList,
                     )
                 )
