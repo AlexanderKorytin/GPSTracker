@@ -26,8 +26,8 @@ class MainViewModel(
     private val settingsInteractor: SettingsInteractor
 ) : ViewModel() {
 
-    private val correctionDistance = 1000f
-    private val correctionTime = 3_600_000f
+    private val correctionTime = 1000f
+    private val correctionSpeed = 3.6f
     private var timer: Timer? = null
     private var startTime = 0L
     private var currentTime = 0L
@@ -49,14 +49,21 @@ class MainViewModel(
                 val locData = intent.getSerializableExtra(LocationService.LOC_INTENT) as LocationDto
                 _screenState.postValue(
                     MainMenuScreenState.Content(
-                        speed = locData.speed,
+                        speed = correctionSpeed * locData.speed,
                         distance = locData.distance,
-                        averageSpeed = (locData.distance / correctionDistance) / (currentTime / correctionTime),
+                        averageSpeed = getAverageSpeed(distance = locData.distance),
                         geoPointList = locData.geoPointList,
                     )
                 )
             }
         }
+    }
+
+    private fun getAverageSpeed(distance: Float): String {
+        return String().format(
+            "%.1f",
+            correctionSpeed * (distance / ((System.currentTimeMillis() - startTime) / correctionTime))
+        )
     }
 
     // очищаем данные геолокации данного сеанса работы сервиса
