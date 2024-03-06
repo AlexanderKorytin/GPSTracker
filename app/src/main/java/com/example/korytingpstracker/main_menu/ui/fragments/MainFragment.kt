@@ -286,9 +286,9 @@ class MainFragment : Fragment() {
 
     private fun processingResult(locData: MainMenuScreenState.Content) = with(binding) {
         speed.text =
-            "${speed.text.split(':')[0]}: ${String().format("%.1f", locData.speed)} km/h"
+            "${speed.text.split(':')[0]}: ${locData.speed} km/h"
         binding.distance.text =
-            "${distance.text.split(':')[0]}: ${String().format("%.1f", locData.distance)} m"
+            "${distance.text.split(':')[0]}: ${locData.distance} m"
         averageSpeed.text =
             "${averageSpeed.text.split(':')[0]}: ${locData.averageSpeed} km/h"
     }

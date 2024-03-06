@@ -49,8 +49,8 @@ class MainViewModel(
                 val locData = intent.getSerializableExtra(LocationService.LOC_INTENT) as LocationDto
                 _screenState.postValue(
                     MainMenuScreenState.Content(
-                        speed = correctionSpeed * locData.speed,
-                        distance = locData.distance,
+                        speed = String.format("%.1f", correctionSpeed * locData.speed),
+                        distance = String.format("%.1f", locData.distance),
                         averageSpeed = getAverageSpeed(distance = locData.distance),
                         geoPointList = locData.geoPointList,
                     )
@@ -60,7 +60,7 @@ class MainViewModel(
     }
 
     private fun getAverageSpeed(distance: Float): String {
-        return String().format(
+        return String.format(
             "%.1f",
             correctionSpeed * (distance / ((System.currentTimeMillis() - startTime) / correctionTime))
         )
