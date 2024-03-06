@@ -3,6 +3,7 @@ package com.example.korytingpstracker.main_menu.ui.fragments
 import android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -29,10 +30,13 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
 class MainFragment : Fragment() {
+    private var polyLine: Polyline? = null
     private var isServiceLocRunning = false
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
@@ -43,6 +47,7 @@ class MainFragment : Fragment() {
     private var fineResult: PermissionResult? = null
     private var backResult: PermissionResult? = null
     private var isBackLocDialogShowed = false
+    private val pointsList = mutableListOf<GeoPoint>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,6 +92,8 @@ class MainFragment : Fragment() {
     }
 
     private fun initOsm() = with(binding) {
+        polyLine = Polyline()
+        polyLine?.outlinePaint?.color = Color.BLUE
         lifecycleScope.launch(Dispatchers.Main) {
             mainViewModel.getLocationProviderValue().observe(viewLifecycleOwner) {
                 myGPSProvider = it
@@ -97,6 +104,7 @@ class MainFragment : Fragment() {
             myLocationNewOverlay.runOnFirstFix {
                 map.overlays.clear()
                 map.overlays.add(myLocationNewOverlay)
+                map.overlays.add(polyLine)
             }
             myLocationNewOverlay.enableFollowLocation()
             map.controller.setZoom(17.0)
@@ -274,6 +282,16 @@ class MainFragment : Fragment() {
         startStop.setOnClickListener(listner)
     }
 
+    private fun addPoint(point: GeoPoint) {
+        polyLine?.addPoint(point)
+    }
+
+    private fun refreshPoints(list: List<GeoPoint>) {
+        list.forEach {
+            polyLine?.addPoint(it)
+        }
+    }
+
     private fun onClick(): OnClickListener {
         return OnClickListener {
             when (it.id) {
@@ -291,5 +309,12 @@ class MainFragment : Fragment() {
             "${distance.text.split(':')[0]}: ${locData.distance} m"
         averageSpeed.text =
             "${averageSpeed.text.split(':')[0]}: ${locData.averageSpeed} km/h"
+        if (pointsList.isEmpty()) {
+            pointsList.addAll(locData.geoPointList)
+            refreshPoints(pointsList)
+        } else {
+            pointsList.add(locData.geoPointList.last())
+            addPoint(pointsList.last())
+        }
     }
 }
