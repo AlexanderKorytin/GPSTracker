@@ -17,6 +17,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.preference.Preference
+import androidx.preference.PreferenceManager
 import com.example.korytingpstracker.R
 import com.example.korytingpstracker.core.ui.MainActivity
 import com.example.korytingpstracker.main_menu.data.dto.LocationDto
@@ -36,12 +38,13 @@ class LocationService : Service() {
     private lateinit var locRequest: LocationRequest
     private lateinit var geoPointList: ArrayList<GeoPoint>
     private lateinit var sharedPref: SharedPreferences
+    private lateinit var timePref: Preference
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locResult: LocationResult) {
             super.onLocationResult(locResult)
             val currentLocation = locResult.lastLocation
             if (lastLocation != null && currentLocation != null) {
-                if (currentLocation.speed > ERROR_BOUNDARY_SPEED) {
+             //   if (currentLocation.speed > ERROR_BOUNDARY_SPEED) {
                     distance += currentLocation.let { lastLocation?.distanceTo(it) } ?: 0.0f
                     geoPointList.add(GeoPoint(currentLocation.latitude, currentLocation.longitude))
                     val locData = LocationDto(
@@ -50,7 +53,7 @@ class LocationService : Service() {
                         geoPointList = geoPointList
                     )
                     sendLocationData(locData)
-                }
+         //       }
             }
             lastLocation = currentLocation
             Log.d("MyLog", "Distance: ${distance}")
@@ -77,10 +80,7 @@ class LocationService : Service() {
     override fun onCreate() {
         super.onCreate()
         geoPointList = arrayListOf()
-        sharedPref = baseContext.getSharedPreferences(
-            applicationContext.getString(AppSettingsPrefKeys.TIMEPREFKEY.value),
-            MODE_PRIVATE
-        )
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         initLocation()
     }
 

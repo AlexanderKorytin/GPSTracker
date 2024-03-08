@@ -18,6 +18,7 @@ import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.preference.PreferenceManager
 import com.example.korytingpstracker.R
 import com.example.korytingpstracker.app.App
 import com.example.korytingpstracker.databinding.FragmentMainBinding
@@ -69,10 +70,7 @@ class MainFragment : Fragment() {
             requireContext(),
             com.google.android.material.R.anim.abc_fade_in
         )
-        sharedPref = requireContext().getSharedPreferences(
-            requireContext().getString(AppSettingsPrefKeys.COLORLINE.value),
-            Service.MODE_PRIVATE
-        )
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext())
         val colorLineCurrent =sharedPref.getString(
             getString(AppSettingsPrefKeys.COLORLINE.value),
             resources.getStringArray(R.array.color_line_value)[0]
