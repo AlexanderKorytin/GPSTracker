@@ -7,6 +7,9 @@ import com.example.korytingpstracker.main_menu.di.mainDomainModule
 import com.example.korytingpstracker.main_menu.di.mainVMModule
 import com.example.korytingpstracker.settings.ui.di.settingsDataModule
 import com.example.korytingpstracker.settings.ui.di.settingsDomainModule
+import com.example.korytingpstracker.tracks.di.trackViewModelModule
+import com.example.korytingpstracker.tracks.di.tracksDataModule
+import com.example.korytingpstracker.tracks.di.tracksDomainModule
 import com.markodevcic.peko.PermissionRequester
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -36,7 +39,11 @@ class App : Application() {
                 mainVMModule,
 
                 settingsDataModule,
-                settingsDomainModule
+                settingsDomainModule,
+
+                tracksDataModule,
+                tracksDomainModule,
+                trackViewModelModule
             )
         }
 
