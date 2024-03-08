@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
 import android.location.Location
@@ -19,6 +20,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.korytingpstracker.R
 import com.example.korytingpstracker.core.ui.MainActivity
 import com.example.korytingpstracker.main_menu.data.dto.LocationDto
+import com.example.korytingpstracker.settings.ui.models.AppSettingsPrefKeys
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -33,13 +35,13 @@ class LocationService : Service() {
     private lateinit var locProvider: FusedLocationProviderClient
     private lateinit var locRequest: LocationRequest
     private lateinit var geoPointList: ArrayList<GeoPoint>
-
+    private lateinit var sharedPref: SharedPreferences
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locResult: LocationResult) {
             super.onLocationResult(locResult)
             val currentLocation = locResult.lastLocation
             if (lastLocation != null && currentLocation != null) {
-                if (currentLocation.speed > ERROR_BOUNDARY_SPEED) {
+             //   if (currentLocation.speed > ERROR_BOUNDARY_SPEED) {
                     distance += currentLocation.let { lastLocation?.distanceTo(it) } ?: 0.0f
                     geoPointList.add(GeoPoint(currentLocation.latitude, currentLocation.longitude))
                     val locData = LocationDto(
@@ -48,7 +50,7 @@ class LocationService : Service() {
                         geoPointList = geoPointList
                     )
                     sendLocationData(locData)
-                }
+        //        }
             }
             lastLocation = currentLocation
             Log.d("MyLog", "Distance: ${distance}")
@@ -75,6 +77,10 @@ class LocationService : Service() {
     override fun onCreate() {
         super.onCreate()
         geoPointList = arrayListOf()
+        sharedPref = baseContext.getSharedPreferences(
+            applicationContext.getString(AppSettingsPrefKeys.TIMEPREFKEY.value),
+            MODE_PRIVATE
+        )
         initLocation()
     }
 
@@ -115,8 +121,13 @@ class LocationService : Service() {
     }
 
     private fun initLocation() {
-        locRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000)
-            .setMinUpdateIntervalMillis(5000)
+        val updateTimeCurrent = sharedPref.getString(
+            getString(AppSettingsPrefKeys.TIMEPREFKEY.value),
+            resources.getStringArray(R.array.location_time_update_value)[0]
+        )
+        val updateLocTime = updateTimeCurrent?.toLong() ?: UPDATE_TIME_DEFAULT
+        locRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, updateLocTime)
+            .setMinUpdateIntervalMillis(updateLocTime)
             .build()
         locProvider = LocationServices.getFusedLocationProviderClient(baseContext)
     }
@@ -146,6 +157,7 @@ class LocationService : Service() {
         private const val CHANEL_ID = "chanel_kolobok"
         private const val REQUEST_CODE = 10
         private const val ERROR_BOUNDARY_SPEED = 0.2f
+        private const val UPDATE_TIME_DEFAULT = 5000L
 
     }
 }
