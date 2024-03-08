@@ -2,10 +2,7 @@ package com.example.korytingpstracker.main_menu.ui.fragments
 
 import android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
-import android.app.Service
 import android.content.Intent
-import android.content.SharedPreferences
-import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -18,14 +15,12 @@ import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.preference.PreferenceManager
 import com.example.korytingpstracker.R
 import com.example.korytingpstracker.app.App
 import com.example.korytingpstracker.databinding.FragmentMainBinding
 import com.example.korytingpstracker.main_menu.data.service.LocationService
 import com.example.korytingpstracker.main_menu.ui.models.MainMenuScreenState
 import com.example.korytingpstracker.main_menu.ui.viewmodel.MainViewModel
-import com.example.korytingpstracker.settings.ui.models.AppSettingsPrefKeys
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.markodevcic.peko.PermissionRequester
 import com.markodevcic.peko.PermissionResult
@@ -52,7 +47,6 @@ class MainFragment : Fragment() {
     private var backResult: PermissionResult? = null
     private var isBackLocDialogShowed = false
     private val pointsList = mutableListOf<GeoPoint>()
-    private lateinit var sharedPref: SharedPreferences
     private var color = 0
 
     override fun onCreateView(
@@ -70,12 +64,7 @@ class MainFragment : Fragment() {
             requireContext(),
             com.google.android.material.R.anim.abc_fade_in
         )
-        sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        val colorLineCurrent =sharedPref.getString(
-            getString(AppSettingsPrefKeys.COLORLINE.value),
-            resources.getStringArray(R.array.color_line_value)[0]
-        )
-        color = Color.parseColor(colorLineCurrent)
+        color = mainViewModel.getColorLine()
         setOnClicks()
         checkLocationServiseState()
         binding.root.startAnimation(anim)

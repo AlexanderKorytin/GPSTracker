@@ -34,6 +34,10 @@ class MainViewModel(
     private var _screenState: MutableLiveData<MainMenuScreenState> = MutableLiveData()
     val screenState = _screenState
     private val _currentTime: MutableLiveData<String> = MutableLiveData()
+    fun getColorLine(): Int {
+        return settingsInteractor.getColorLocationTrackLine()
+    }
+
     fun getCurrentTime(): LiveData<String> = _currentTime
 
     private var locationProvider: MutableLiveData<GpsMyLocationProvider> = MutableLiveData(null)

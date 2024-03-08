@@ -8,4 +8,12 @@ class SettingInteractorImpl(private val repository: SettingsRepository): Setting
         repository.saveIsNeedDialogShow(value)
     }
 
+    override fun getColorLocationTrackLine(): Int {
+        return repository.getColorLocationTrackLine()
+    }
+
+    override fun getLocationUpdateTime(): Long {
+        return repository.getLocationUpdateTime()
+    }
+
 }

@@ -5,9 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.korytingpstracker.app.APP_SETTINGS_PREF_KEY
 import com.example.korytingpstracker.main_menu.data.api.MapClient
 import com.example.korytingpstracker.main_menu.data.network.OpenStreetMapClient
-import com.example.korytingpstracker.main_menu.data.service.LocationService
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 

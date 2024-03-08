@@ -7,4 +7,14 @@ class SettingsRepositoryImpl(private val settingsStorage: SettingsStorage) : Set
     override fun saveIsNeedDialogShow(value: Boolean) {
         settingsStorage.saveIsNeedDialogShow(value)
     }
+
+    override fun getColorLocationTrackLine(): Int {
+        return settingsStorage.getColorLocationTrackLine()
+    }
+
+    override fun getLocationUpdateTime(): Long {
+        return settingsStorage.getLocationUpdateTime()
+    }
+
+
 }
