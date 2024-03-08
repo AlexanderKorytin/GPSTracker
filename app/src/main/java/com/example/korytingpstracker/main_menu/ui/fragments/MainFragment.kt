@@ -2,7 +2,9 @@ package com.example.korytingpstracker.main_menu.ui.fragments
 
 import android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.app.Service
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -22,6 +24,7 @@ import com.example.korytingpstracker.databinding.FragmentMainBinding
 import com.example.korytingpstracker.main_menu.data.service.LocationService
 import com.example.korytingpstracker.main_menu.ui.models.MainMenuScreenState
 import com.example.korytingpstracker.main_menu.ui.viewmodel.MainViewModel
+import com.example.korytingpstracker.settings.ui.models.AppSettingsPrefKeys
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.markodevcic.peko.PermissionRequester
 import com.markodevcic.peko.PermissionResult
@@ -48,6 +51,8 @@ class MainFragment : Fragment() {
     private var backResult: PermissionResult? = null
     private var isBackLocDialogShowed = false
     private val pointsList = mutableListOf<GeoPoint>()
+    private lateinit var sharedPref: SharedPreferences
+    private var color = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,6 +69,15 @@ class MainFragment : Fragment() {
             requireContext(),
             com.google.android.material.R.anim.abc_fade_in
         )
+        sharedPref = requireContext().getSharedPreferences(
+            requireContext().getString(AppSettingsPrefKeys.COLORLINE.value),
+            Service.MODE_PRIVATE
+        )
+        val colorLineCurrent =sharedPref.getString(
+            getString(AppSettingsPrefKeys.COLORLINE.value),
+            resources.getStringArray(R.array.color_line_value)[0]
+        )
+        color = Color.parseColor(colorLineCurrent)
         setOnClicks()
         checkLocationServiseState()
         binding.root.startAnimation(anim)
@@ -71,6 +85,8 @@ class MainFragment : Fragment() {
         updateTime()
         checkPermission()
         mainViewModel.registeringRecevier(requireContext())
+        polyLine = Polyline()
+        polyLine?.outlinePaint?.color = color
         mainViewModel.screenState.observe(viewLifecycleOwner) {
             when (it) {
                 is MainMenuScreenState.Content -> {
@@ -78,6 +94,12 @@ class MainFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkPermission()
+        polyLine?.outlinePaint?.color = color
     }
 
     override fun onDestroyView() {
@@ -88,12 +110,11 @@ class MainFragment : Fragment() {
         )
         binding.root.startAnimation(anim)
         mainViewModel.unRegisteringRecevier(requireContext())
+        pointsList.clear()
         _binding = null
     }
 
     private fun initOsm() = with(binding) {
-        polyLine = Polyline()
-        polyLine?.outlinePaint?.color = Color.BLUE
         lifecycleScope.launch(Dispatchers.Main) {
             mainViewModel.getLocationProviderValue().observe(viewLifecycleOwner) {
                 myGPSProvider = it
@@ -255,6 +276,7 @@ class MainFragment : Fragment() {
             mainViewModel.setStartTime()
             mainViewModel.startTimer()
             binding.startStop.setImageResource(R.drawable.ic_stop)
+            pointsList.clear()
             mainViewModel.clearLocData()
         } else {
             activity?.stopService(Intent(activity, LocationService::class.java))
@@ -313,8 +335,8 @@ class MainFragment : Fragment() {
             pointsList.addAll(locData.geoPointList)
             refreshPoints(pointsList)
         } else {
-            pointsList.add(locData.geoPointList.last())
-            addPoint(pointsList.last())
+            pointsList.add(locData.geoPointList[pointsList.size - 1])
+            addPoint(pointsList[pointsList.size - 1])
         }
     }
 }
