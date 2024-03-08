@@ -1,13 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="8dp"
     tools:context=".tracks.ui.fragments.TracksListFragment">
 
+    <ImageView
+        android:id="@+id/tv_empty_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center"
+        android:cropToPadding="true"
+        android:scaleType="center"
+        android:src="@drawable/empty_list"
+        android:visibility="gone" />
+
     <TextView
+        android:id="@+id/tv_empty_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/white"
+        android:text="@string/list_is_empty"
+        android:textSize="24sp"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tv_list_tracks"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="List Tracks Fragment" />
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/location_track_item" />
 
 </FrameLayout>
