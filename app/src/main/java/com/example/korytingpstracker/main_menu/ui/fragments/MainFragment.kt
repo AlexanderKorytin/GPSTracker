@@ -19,6 +19,7 @@ import com.example.korytingpstracker.R
 import com.example.korytingpstracker.app.App
 import com.example.korytingpstracker.databinding.FragmentMainBinding
 import com.example.korytingpstracker.main_menu.data.service.LocationService
+import com.example.korytingpstracker.main_menu.ui.models.LocationTrack
 import com.example.korytingpstracker.main_menu.ui.models.MainMenuScreenState
 import com.example.korytingpstracker.main_menu.ui.viewmodel.MainViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -77,7 +78,7 @@ class MainFragment : Fragment() {
         mainViewModel.screenState.observe(viewLifecycleOwner) {
             when (it) {
                 is MainMenuScreenState.Content -> {
-                    processingResult(it)
+                    processingResult(it.data)
                 }
             }
         }
@@ -311,7 +312,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun processingResult(locData: MainMenuScreenState.Content) = with(binding) {
+    private fun processingResult(locData: LocationTrack) = with(binding) {
         speed.text =
             "${speed.text.split(':')[0]}: ${locData.speed} km/h"
         binding.distance.text =

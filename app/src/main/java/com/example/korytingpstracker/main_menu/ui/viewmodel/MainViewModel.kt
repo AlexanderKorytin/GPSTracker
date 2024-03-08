@@ -12,6 +12,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.korytingpstracker.main_menu.data.dto.LocationDto
 import com.example.korytingpstracker.main_menu.data.service.LocationService
 import com.example.korytingpstracker.main_menu.domain.api.MainInteractor
+import com.example.korytingpstracker.main_menu.ui.models.LocationTrack
 import com.example.korytingpstracker.main_menu.ui.models.MainMenuScreenState
 import com.example.korytingpstracker.settings.ui.domain.api.SettingsInteractor
 import com.example.korytingpstracker.util.getTime
@@ -53,10 +54,12 @@ class MainViewModel(
                 val locData = intent.getSerializableExtra(LocationService.LOC_INTENT) as LocationDto
                 _screenState.postValue(
                     MainMenuScreenState.Content(
-                        speed = String.format("%.1f", correctionSpeed * locData.speed),
-                        distance = String.format("%.1f", locData.distance),
-                        averageSpeed = getAverageSpeed(distance = locData.distance),
-                        geoPointList = locData.geoPointList,
+                        LocationTrack(
+                            speed = String.format("%.1f", correctionSpeed * locData.speed),
+                            distance = String.format("%.1f", locData.distance),
+                            averageSpeed = getAverageSpeed(distance = locData.distance),
+                            geoPointList = locData.geoPointList,
+                        )
                     )
                 )
             }
@@ -72,7 +75,7 @@ class MainViewModel(
 
     // очищаем данные геолокации данного сеанса работы сервиса
     fun clearLocData() {
-        _screenState.postValue(MainMenuScreenState.Content())
+        _screenState.postValue(MainMenuScreenState.Content(LocationTrack()))
     }
 
     fun registeringRecevier(context: Context) {
