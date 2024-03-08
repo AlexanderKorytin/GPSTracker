@@ -31,5 +31,6 @@
     <string name="update_time_key" translatable="false">update_time_key</string>
     <string name="color_key" translatable="false">color_key</string>
     <string name="dialog_back_loc_neutral">Ok</string>
+    <string name="list_is_empty">List is empty</string>
 
 </resources>
