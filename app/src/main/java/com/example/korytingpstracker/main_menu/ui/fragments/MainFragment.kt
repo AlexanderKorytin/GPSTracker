@@ -12,6 +12,7 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -49,6 +50,8 @@ class MainFragment : Fragment() {
     private var isBackLocDialogShowed = false
     private val pointsList = mutableListOf<GeoPoint>()
     private var color = 0
+    private val saveDialogEditText by lazy { EditText(requireContext()) }
+    private var locTrackForSaved = LocationTrack()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -258,7 +261,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun startStopServise() {
+    private fun startStopService() {
         if (!isServiceLocRunning) {
             startLocService()
             mainViewModel.setStartTime()
@@ -270,6 +273,7 @@ class MainFragment : Fragment() {
             activity?.stopService(Intent(activity, LocationService::class.java))
             mainViewModel.stopTimer()
             binding.startStop.setImageResource(R.drawable.ic_play)
+            setSaveDialog(locTrackForSaved)
         }
         isServiceLocRunning = !isServiceLocRunning
     }
@@ -306,10 +310,24 @@ class MainFragment : Fragment() {
         return OnClickListener {
             when (it.id) {
                 R.id.start_stop -> {
-                    startStopServise()
+                    startStopService()
                 }
             }
         }
+    }
+
+    private fun setSaveDialog(locTrack: LocationTrack) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setCancelable(false)
+            .setTitle(getString(R.string.save_track_dialog_title))
+            .setMessage(getString(R.string.save_track_dialog_message))
+            .setView(saveDialogEditText)
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
+                mainViewModel.saveLocationTrack(locTrack.copy(locName = saveDialogEditText.text.toString()))
+            }
+            .setNegativeButton(getString(R.string.no)) { _, _ ->
+
+            }.show()
     }
 
     private fun processingResult(locData: LocationTrack) = with(binding) {
@@ -326,5 +344,10 @@ class MainFragment : Fragment() {
             pointsList.add(locData.geoPointList[pointsList.size - 1])
             addPoint(pointsList[pointsList.size - 1])
         }
+        locTrackForSaved = LocationTrack(
+            distance = locData.distance,
+            averageSpeed = locData.averageSpeed,
+            geoPointList = pointsList
+        )
     }
 }
