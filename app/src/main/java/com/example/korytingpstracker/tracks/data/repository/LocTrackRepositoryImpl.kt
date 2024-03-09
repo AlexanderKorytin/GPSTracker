@@ -13,7 +13,7 @@ class LocTrackRepositoryImpl(private val db: AppDataBase) : LocationTrackReposit
     }
 
     override suspend fun getAllLocTracks(): Flow<List<LocationTrack>> = flow {
-        emit(db.getLocTrackDao().getAllLocTracks().map { map(it) })
+        emit(db.getLocTrackDao().getAllLocTracks().sortedBy { it.id }.map { map(it) })
     }
 
     override suspend fun getLocTrackByName(trackName: String): Flow<LocationTrack> = flow {
