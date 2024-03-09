@@ -110,16 +110,16 @@ class MainFragment : Fragment() {
             mainViewModel.getLocationProviderValue().observe(viewLifecycleOwner) {
                 myGPSProvider = it
             }
-            myLocationNewOverlay = MyLocationNewOverlay(myGPSProvider, map)
+            myLocationNewOverlay = MyLocationNewOverlay(myGPSProvider, tvMap)
             myLocationNewOverlay.enableMyLocation()
             myLocationNewOverlay.enableFollowLocation()
             myLocationNewOverlay.runOnFirstFix {
-                map.overlays.clear()
-                map.overlays.add(myLocationNewOverlay)
-                map.overlays.add(polyLine)
+                tvMap.overlays.clear()
+                tvMap.overlays.add(myLocationNewOverlay)
+                tvMap.overlays.add(polyLine)
             }
             myLocationNewOverlay.enableFollowLocation()
-            map.controller.setZoom(17.0)
+           tvMap.controller.setZoom(17.0)
         }
     }
 
@@ -257,7 +257,7 @@ class MainFragment : Fragment() {
 
     private fun updateTime() {
         mainViewModel.getCurrentTime().observe(viewLifecycleOwner) {
-            binding.time.text = "${binding.time.text.split(':')[0]}: ${it}"
+            binding.tvTime.text = "${binding.tvTime.text.split(':')[0]}: ${it}"
         }
     }
 
@@ -266,13 +266,13 @@ class MainFragment : Fragment() {
             startLocService()
             mainViewModel.setStartTime()
             mainViewModel.startTimer()
-            binding.startStop.setImageResource(R.drawable.ic_stop)
+            binding.buttonStartStop.setImageResource(R.drawable.ic_stop)
             pointsList.clear()
             mainViewModel.clearLocData()
         } else {
             activity?.stopService(Intent(activity, LocationService::class.java))
             mainViewModel.stopTimer()
-            binding.startStop.setImageResource(R.drawable.ic_play)
+            binding.buttonStartStop.setImageResource(R.drawable.ic_play)
             setSaveDialog(locTrackForSaved)
         }
         isServiceLocRunning = !isServiceLocRunning
@@ -283,17 +283,17 @@ class MainFragment : Fragment() {
         mainViewModel.getStateService().observe(viewLifecycleOwner) {
             isServiceLocRunning = it
             if (isServiceLocRunning) {
-                binding.startStop.setImageResource(R.drawable.ic_stop)
+                binding.buttonStartStop.setImageResource(R.drawable.ic_stop)
                 mainViewModel.startTimer()
             } else {
-                binding.startStop.setImageResource(R.drawable.ic_play)
+                binding.buttonStartStop.setImageResource(R.drawable.ic_play)
             }
         }
     }
 
     fun setOnClicks() = with(binding) {
         val listner = onClick()
-        startStop.setOnClickListener(listner)
+        buttonStartStop.setOnClickListener(listner)
     }
 
     private fun addPoint(point: GeoPoint) {
@@ -331,12 +331,12 @@ class MainFragment : Fragment() {
     }
 
     private fun processingResult(locData: LocationTrack) = with(binding) {
-        speed.text =
-            "${speed.text.split(':')[0]}: ${locData.speed} km/h"
-        binding.distance.text =
-            "${distance.text.split(':')[0]}: ${locData.distance} m"
-        averageSpeed.text =
-            "${averageSpeed.text.split(':')[0]}: ${locData.averageSpeed} km/h"
+        tvSpeed.text =
+            "${tvSpeed.text.split(':')[0]}: ${locData.speed} km/h"
+        binding.tvDistance.text =
+            "${tvDistance.text.split(':')[0]}: ${locData.distance} m"
+       tvAverageSpeed.text =
+            "${tvAverageSpeed.text.split(':')[0]}: ${locData.averageSpeed} km/h"
         if (pointsList.isEmpty()) {
             pointsList.addAll(locData.geoPointList)
             refreshPoints(pointsList)
