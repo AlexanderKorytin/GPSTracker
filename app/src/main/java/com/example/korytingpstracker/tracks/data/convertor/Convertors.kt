@@ -5,6 +5,8 @@ import com.example.korytingpstracker.tracks.data.entity.LocTrackEntity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.osmdroid.util.GeoPoint
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 fun map(locTrackEntity: LocTrackEntity): LocationTrack {
     return LocationTrack(
@@ -20,7 +22,10 @@ fun map(locTrackEntity: LocTrackEntity): LocationTrack {
 
 fun map(locTrack: LocationTrack): LocTrackEntity {
     return LocTrackEntity(
-        trackName = locTrack.locName,
+        trackName = locTrack.locName.ifEmpty {
+            LocalDateTime.now()
+                .toEpochSecond(ZoneOffset.UTC).toString()
+        },
         distance = locTrack.distance,
         averageSpeed = locTrack.averageSpeed,
         locationPointsList = Gson().toJson(locTrack.geoPointList)
