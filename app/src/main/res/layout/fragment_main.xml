@@ -8,7 +8,7 @@
     tools:context=".main_menu.ui.fragments.MainFragment">
 
     <org.osmdroid.views.MapView
-        android:id="@+id/map"
+        android:id="@+id/tv_map"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -21,7 +21,7 @@
     </org.osmdroid.views.MapView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/my_position"
+        android:id="@+id/button_my_position"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -33,18 +33,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/start_stop"
+        android:id="@+id/button_start_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:clickable="true"
         android:src="@drawable/ic_play"
         app:backgroundTint="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="@+id/my_position"
-        app:layout_constraintTop_toBottomOf="@+id/my_position" />
+        app:layout_constraintEnd_toEndOf="@+id/button_my_position"
+        app:layout_constraintTop_toBottomOf="@+id/button_my_position" />
 
     <TextView
-        android:id="@+id/time"
+        android:id="@+id/tv_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -57,7 +57,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/average_speed"
+        android:id="@+id/tv_average_speed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -65,11 +65,11 @@
         android:paddingHorizontal="8dp"
         android:text="Average speed: 0.0 km/h"
         android:textColor="#000000"
-        app:layout_constraintStart_toStartOf="@+id/time"
-        app:layout_constraintTop_toBottomOf="@+id/time" />
+        app:layout_constraintStart_toStartOf="@+id/tv_time"
+        app:layout_constraintTop_toBottomOf="@+id/tv_time" />
 
     <TextView
-        android:id="@+id/speed"
+        android:id="@+id/tv_speed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -77,11 +77,11 @@
         android:paddingHorizontal="8dp"
         android:text="Speed: 0.0 km/h"
         android:textColor="#000000"
-        app:layout_constraintStart_toStartOf="@+id/average_speed"
-        app:layout_constraintTop_toBottomOf="@+id/average_speed" />
+        app:layout_constraintStart_toStartOf="@+id/tv_average_speed"
+        app:layout_constraintTop_toBottomOf="@+id/tv_average_speed" />
 
     <TextView
-        android:id="@+id/distance"
+        android:id="@+id/tv_distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -90,6 +90,6 @@
         android:text="Distance: 0 m"
         android:textColor="#000000"
         android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="@+id/speed"
-        app:layout_constraintTop_toBottomOf="@+id/speed" />
+        app:layout_constraintStart_toStartOf="@+id/tv_speed"
+        app:layout_constraintTop_toBottomOf="@+id/tv_speed" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -309,7 +309,7 @@ class MainFragment : Fragment() {
     private fun onClick(): OnClickListener {
         return OnClickListener {
             when (it.id) {
-                R.id.start_stop -> {
+                R.id.button_start_stop -> {
                     startStopService()
                 }
             }
