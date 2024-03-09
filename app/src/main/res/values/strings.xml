@@ -31,6 +31,9 @@
     <string name="update_time_key" translatable="false">update_time_key</string>
     <string name="color_key" translatable="false">color_key</string>
     <string name="dialog_back_loc_neutral">Ok</string>
-    <string name="list_is_empty">List is empty</string>
+    <string name="list_is_empty" translatable="false">List is empty</string>
+
+    <string name="save_track_dialog_title" translatable="false">save the track?</string>
+    <string name="save_track_dialog_message" translatable="false">Would you like to save the track? - Enter the name and click "yes"!</string>
 
 </resources>
