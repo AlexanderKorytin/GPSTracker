@@ -15,6 +15,7 @@ import com.example.korytingpstracker.main_menu.domain.api.MainInteractor
 import com.example.korytingpstracker.main_menu.ui.models.LocationTrack
 import com.example.korytingpstracker.main_menu.ui.models.MainMenuScreenState
 import com.example.korytingpstracker.settings.ui.domain.api.SettingsInteractor
+import com.example.korytingpstracker.tracks.domain.api.LocationTrackInteractor
 import com.example.korytingpstracker.util.getTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,7 +25,8 @@ import java.util.TimerTask
 
 class MainViewModel(
     private val mainInteractor: MainInteractor,
-    private val settingsInteractor: SettingsInteractor
+    private val settingsInteractor: SettingsInteractor,
+    private val dataBaseInteractor: LocationTrackInteractor
 ) : ViewModel() {
 
     private val correctionTime = 1000f
@@ -71,6 +73,12 @@ class MainViewModel(
             "%.1f",
             correctionSpeed * (distance / ((System.currentTimeMillis() - startTime) / correctionTime))
         )
+    }
+
+    fun saveLocationTrack(locTrack: LocationTrack) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataBaseInteractor.saveLocationTrack(locTrack)
+        }
     }
 
     // очищаем данные геолокации данного сеанса работы сервиса
