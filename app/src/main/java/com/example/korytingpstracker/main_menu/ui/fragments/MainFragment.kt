@@ -50,7 +50,6 @@ class MainFragment : Fragment() {
     private var isBackLocDialogShowed = false
     private val pointsList = mutableListOf<GeoPoint>()
     private var color = 0
-    private val saveDialogEditText by lazy { EditText(requireContext()) }
     private var locTrackForSaved = LocationTrack()
 
     override fun onCreateView(
@@ -119,8 +118,12 @@ class MainFragment : Fragment() {
                 tvMap.overlays.add(polyLine)
             }
             myLocationNewOverlay.enableFollowLocation()
-           tvMap.controller.setZoom(17.0)
+            tvMap.controller.setZoom(17.0)
         }
+    }
+
+    fun showMyLocation() = with(binding) {
+
     }
 
     private fun checkPermission() {
@@ -274,6 +277,7 @@ class MainFragment : Fragment() {
             mainViewModel.stopTimer()
             binding.buttonStartStop.setImageResource(R.drawable.ic_play)
             setSaveDialog(locTrackForSaved)
+            locTrackForSaved = LocationTrack()
         }
         isServiceLocRunning = !isServiceLocRunning
     }
@@ -312,22 +316,29 @@ class MainFragment : Fragment() {
                 R.id.button_start_stop -> {
                     startStopService()
                 }
+
+                R.id.button_my_position -> {
+                    showMyLocation()
+                }
             }
         }
     }
 
     private fun setSaveDialog(locTrack: LocationTrack) {
-        MaterialAlertDialogBuilder(requireContext())
-            .setCancelable(false)
-            .setTitle(getString(R.string.save_track_dialog_title))
-            .setMessage(getString(R.string.save_track_dialog_message))
-            .setView(saveDialogEditText)
-            .setPositiveButton(getString(R.string.yes)) { _, _ ->
-                mainViewModel.saveLocationTrack(locTrack.copy(locName = saveDialogEditText.text.toString()))
-            }
-            .setNegativeButton(getString(R.string.no)) { _, _ ->
+        if (locTrack.geoPointList.isNotEmpty()) {
+            val saveDialogEditText = EditText(requireContext())
+            val dialog = MaterialAlertDialogBuilder(requireContext())
+                .setCancelable(false)
+                .setTitle(getString(R.string.save_track_dialog_title))
+                .setMessage(getString(R.string.save_track_dialog_message))
+                .setView(saveDialogEditText)
+                .setPositiveButton(getString(R.string.yes)) { _, _ ->
+                    mainViewModel.saveLocationTrack(locTrack.copy(locName = saveDialogEditText.text.toString()))
+                }
+                .setNegativeButton(getString(R.string.no)) { _, _ ->
 
-            }.show()
+                }.show()
+        }
     }
 
     private fun processingResult(locData: LocationTrack) = with(binding) {
@@ -335,7 +346,7 @@ class MainFragment : Fragment() {
             "${tvSpeed.text.split(':')[0]}: ${locData.speed} km/h"
         binding.tvDistance.text =
             "${tvDistance.text.split(':')[0]}: ${locData.distance} m"
-       tvAverageSpeed.text =
+        tvAverageSpeed.text =
             "${tvAverageSpeed.text.split(':')[0]}: ${locData.averageSpeed} km/h"
         if (pointsList.isEmpty()) {
             pointsList.addAll(locData.geoPointList)
