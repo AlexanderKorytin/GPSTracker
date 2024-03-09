@@ -122,9 +122,6 @@ class MainFragment : Fragment() {
         }
     }
 
-    fun showMyLocation() = with(binding) {
-
-    }
 
     private fun checkPermission() {
         val arrayPermissionResult = mutableListOf<String>()
@@ -264,24 +261,6 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun startStopService() {
-        if (!isServiceLocRunning) {
-            startLocService()
-            mainViewModel.setStartTime()
-            mainViewModel.startTimer()
-            binding.buttonStartStop.setImageResource(R.drawable.ic_stop)
-            pointsList.clear()
-            mainViewModel.clearLocData()
-        } else {
-            activity?.stopService(Intent(activity, LocationService::class.java))
-            mainViewModel.stopTimer()
-            binding.buttonStartStop.setImageResource(R.drawable.ic_play)
-            setSaveDialog(locTrackForSaved)
-            locTrackForSaved = LocationTrack()
-        }
-        isServiceLocRunning = !isServiceLocRunning
-    }
-
     private fun checkLocationServiseState() {
         mainViewModel.checkedLocationServiceState()
         mainViewModel.getStateService().observe(viewLifecycleOwner) {
@@ -298,6 +277,7 @@ class MainFragment : Fragment() {
     fun setOnClicks() = with(binding) {
         val listner = onClick()
         buttonStartStop.setOnClickListener(listner)
+        buttonMyPosition.setOnClickListener(listner)
     }
 
     private fun addPoint(point: GeoPoint) {
@@ -322,6 +302,29 @@ class MainFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun startStopService() {
+        if (!isServiceLocRunning) {
+            startLocService()
+            mainViewModel.setStartTime()
+            mainViewModel.startTimer()
+            binding.buttonStartStop.setImageResource(R.drawable.ic_stop)
+            pointsList.clear()
+            mainViewModel.clearLocData()
+        } else {
+            activity?.stopService(Intent(activity, LocationService::class.java))
+            mainViewModel.stopTimer()
+            binding.buttonStartStop.setImageResource(R.drawable.ic_play)
+            setSaveDialog(locTrackForSaved)
+            locTrackForSaved = LocationTrack()
+        }
+        isServiceLocRunning = !isServiceLocRunning
+    }
+
+    fun showMyLocation() = with(binding) {
+        myLocationNewOverlay.enableFollowLocation()
+        tvMap.controller.setZoom(17.0)
     }
 
     private fun setSaveDialog(locTrack: LocationTrack) {
