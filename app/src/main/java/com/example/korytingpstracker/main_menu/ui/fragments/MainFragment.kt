@@ -167,7 +167,7 @@ class MainFragment : Fragment() {
                         && fineResult is PermissionResult.Granted
                         && backResult !is PermissionResult.Granted
                     ) {
-                        val dialog = MaterialAlertDialogBuilder(requireContext())
+                        val dialog = MaterialAlertDialogBuilder(requireContext(),  R.style.AlertDialogTheme)
                             .setCancelable(false)
                             .setTitle(requireContext().getString(R.string.dialog_back_loc_title))
                             .setMessage(requireContext().getString(R.string.dialog_back_loc_message))
@@ -198,7 +198,7 @@ class MainFragment : Fragment() {
             }
             //Пользователь отказал в предоставлении разрешения
             is PermissionResult.Denied -> {
-                val dialog = MaterialAlertDialogBuilder(requireContext())
+                val dialog = MaterialAlertDialogBuilder(requireContext(),  R.style.AlertDialogTheme)
                     .setCancelable(false)
                     .setTitle(requireContext().getString(R.string.dialog_location_title))
                     .setMessage(requireContext().getString(R.string.dialog_location_message))
@@ -329,8 +329,8 @@ class MainFragment : Fragment() {
 
     private fun setSaveDialog(locTrack: LocationTrack) {
         if (locTrack.geoPointList.isNotEmpty()) {
-            val saveDialogEditText = EditText(requireContext())
-            val dialog = MaterialAlertDialogBuilder(requireContext())
+            val saveDialogEditText = EditText(requireContext(), null,  R.style.save_dialog_edittext,  R.style.save_dialog_edittext)
+            val dialog = MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialogTheme)
                 .setCancelable(false)
                 .setTitle(getString(R.string.save_track_dialog_title))
                 .setMessage(getString(R.string.save_track_dialog_message))
