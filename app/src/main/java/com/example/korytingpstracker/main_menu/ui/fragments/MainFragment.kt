@@ -171,7 +171,7 @@ class MainFragment : Fragment() {
                             .setCancelable(false)
                             .setTitle(requireContext().getString(R.string.dialog_back_loc_title))
                             .setMessage(requireContext().getString(R.string.dialog_back_loc_message))
-                            .setNeutralButton(requireContext().getString(R.string.dialog_back_loc_neutral)) { _, _ ->
+                            .setPositiveButton(requireContext().getString(R.string.dialog_back_loc_neutral)) { _, _ ->
                                 isBackLocDialogShowed = false
                                 lifecycleScope.launch {
                                     requester.request(permission).collect { result ->
