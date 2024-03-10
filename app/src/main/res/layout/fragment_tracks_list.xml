@@ -7,24 +7,32 @@
     android:padding="8dp"
     tools:context=".tracks.ui.fragments.TracksListFragment">
 
-    <ImageView
-        android:id="@+id/tv_empty_image"
+    <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
-        android:layout_marginTop="24dp"
         android:layout_height="wrap_content"
         android:layout_gravity="top|center"
-        android:cropToPadding="true"
-        android:scaleType="center"
-        android:src="@drawable/empty_list"
-        android:visibility="gone" />
+        android:layout_marginTop="24dp"
+        android:elevation="12dp"
+        app:cardCornerRadius="12dp">
+
+        <ImageView
+            android:id="@+id/tv_empty_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:cropToPadding="true"
+            android:scaleType="center"
+            android:src="@drawable/empty_list"
+            android:visibility="gone" />
+
+    </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/tv_empty_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textColor="@color/white"
         android:text="@string/list_is_empty"
+        android:textColor="@color/white"
         android:textSize="24sp"
         android:visibility="gone" />
 
