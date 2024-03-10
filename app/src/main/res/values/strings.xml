@@ -36,4 +36,6 @@
     <string name="save_track_dialog_title" translatable="false">save the track?</string>
     <string name="save_track_dialog_message" translatable="false">Would you like to save the track? - Enter the name and click "yes"!</string>
 
+    <string name="playlist_name_hint" translatable="false">Enter track name</string>
+
 </resources>
