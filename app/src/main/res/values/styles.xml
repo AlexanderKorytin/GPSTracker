@@ -30,7 +30,7 @@
     </style>
 
     <style name="save_dialog_edittext">
-        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">56dp</item>
         <item name="android:layout_marginHorizontal">16dp</item>
         <item name="android:paddingHorizontal">16dp</item>
@@ -40,9 +40,11 @@
         <item name="android:textColor">@color/tabtextcolor</item>
         <item name="android:textSize">16sp</item>
         <item name="android:background">@drawable/save_dialog_edit_text_back</item>
+        <item name="android:focusable">true</item>
         <item name="android:textCursorDrawable">@drawable/edit_text_cursor</item>
         <item name="android:hint">@string/playlist_name_hint</item>
-        <item name="android:maxLines">1</item>
-
+        <item name="android:inputType">text</item>
+        <item name="android:imeOptions">actionDone</item>
+        <item name="android:cursorVisible">true</item>
     </style>
 </resources>
