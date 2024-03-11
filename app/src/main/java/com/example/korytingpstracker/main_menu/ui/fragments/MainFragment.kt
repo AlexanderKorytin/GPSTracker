@@ -12,12 +12,12 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.korytingpstracker.R
 import com.example.korytingpstracker.app.App
+import com.example.korytingpstracker.databinding.EditTextSaveDialogBinding
 import com.example.korytingpstracker.databinding.FragmentMainBinding
 import com.example.korytingpstracker.main_menu.data.service.LocationService
 import com.example.korytingpstracker.main_menu.ui.models.LocationTrack
@@ -329,14 +329,14 @@ class MainFragment : Fragment() {
 
     private fun setSaveDialog(locTrack: LocationTrack) {
         if (locTrack.geoPointList.isNotEmpty()) {
-            val saveDialogEditText = EditText(requireContext(), null,  R.style.save_dialog_edittext,  R.style.save_dialog_edittext)
+            val saveDialogEditText= EditTextSaveDialogBinding.inflate(LayoutInflater.from(requireContext()))
             val dialog = MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialogTheme)
                 .setCancelable(false)
                 .setTitle(getString(R.string.save_track_dialog_title))
                 .setMessage(getString(R.string.save_track_dialog_message))
-                .setView(saveDialogEditText)
+                .setView(saveDialogEditText.root)
                 .setPositiveButton(getString(R.string.yes)) { _, _ ->
-                    mainViewModel.saveLocationTrack(locTrack.copy(locName = saveDialogEditText.text.toString()))
+                    mainViewModel.saveLocationTrack(locTrack.copy(locName = saveDialogEditText.inputName.text.toString()))
                 }
                 .setNegativeButton(getString(R.string.no)) { _, _ ->
 
