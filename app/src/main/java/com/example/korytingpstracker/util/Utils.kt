@@ -37,3 +37,9 @@ fun getTime(timeInMillis: Long): String {
     calendar.timeInMillis = timeInMillis
     return formater.format(calendar.time)
 }
+
+fun getDate(): String {
+    val formater = SimpleDateFormat("dd.MM.yyyy HH:mm")
+    val calendar = Calendar.getInstance()
+    return formater.format(calendar.time)
+}
