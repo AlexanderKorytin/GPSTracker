@@ -1,11 +1,11 @@
-package com.example.korytingpstracker.tracks.data.dao
+package com.example.korytingpstracker.tracks.data.db.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.korytingpstracker.tracks.data.entity.LocTrackEntity
+import com.example.korytingpstracker.tracks.data.db.entity.LocTrackEntity
 
 @Dao
 interface LocationsTracksDao {
