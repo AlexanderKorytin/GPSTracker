@@ -168,19 +168,20 @@ class MainFragment : Fragment() {
                         && fineResult is PermissionResult.Granted
                         && backResult !is PermissionResult.Granted
                     ) {
-                        val dialog = MaterialAlertDialogBuilder(requireContext(),  R.style.AlertDialogTheme)
-                            .setCancelable(false)
-                            .setTitle(requireContext().getString(R.string.dialog_back_loc_title))
-                            .setMessage(requireContext().getString(R.string.dialog_back_loc_message))
-                            .setPositiveButton(requireContext().getString(R.string.dialog_back_loc_neutral)) { _, _ ->
-                                isBackLocDialogShowed = false
-                                lifecycleScope.launch {
-                                    requester.request(permission).collect { result ->
-                                        backResult = result
-                                        getResultBackGroundLocation(result)
+                        val dialog =
+                            MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialogTheme)
+                                .setCancelable(false)
+                                .setTitle(requireContext().getString(R.string.dialog_back_loc_title))
+                                .setMessage(requireContext().getString(R.string.dialog_back_loc_message))
+                                .setPositiveButton(requireContext().getString(R.string.dialog_back_loc_neutral)) { _, _ ->
+                                    isBackLocDialogShowed = false
+                                    lifecycleScope.launch {
+                                        requester.request(permission).collect { result ->
+                                            backResult = result
+                                            getResultBackGroundLocation(result)
+                                        }
                                     }
                                 }
-                            }
                         if (!isBackLocDialogShowed) {
                             isBackLocDialogShowed = true
                             dialog.show()
@@ -199,7 +200,7 @@ class MainFragment : Fragment() {
             }
             //Пользователь отказал в предоставлении разрешения
             is PermissionResult.Denied -> {
-                val dialog = MaterialAlertDialogBuilder(requireContext(),  R.style.AlertDialogTheme)
+                val dialog = MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialogTheme)
                     .setCancelable(false)
                     .setTitle(requireContext().getString(R.string.dialog_location_title))
                     .setMessage(requireContext().getString(R.string.dialog_location_message))
@@ -331,7 +332,8 @@ class MainFragment : Fragment() {
 
     private fun setSaveDialog(locTrack: LocationTrack) {
         if (locTrack.geoPointList.isNotEmpty()) {
-            val saveDialogEditText= EditTextSaveDialogBinding.inflate(LayoutInflater.from(requireContext()))
+            val saveDialogEditText =
+                EditTextSaveDialogBinding.inflate(LayoutInflater.from(requireContext()))
             val dialog = MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialogTheme)
                 .setCancelable(false)
                 .setTitle(getString(R.string.save_track_dialog_title))
