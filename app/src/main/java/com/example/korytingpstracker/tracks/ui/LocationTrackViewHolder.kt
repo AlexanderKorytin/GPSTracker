@@ -8,5 +8,7 @@ class LocationTrackViewHolder(private val binding: LocationTrackItemBinding): Re
     fun bind(locTrack: LocationTrack) = with(binding){
         tvTrackDistance.text = "Distance: ${locTrack.distance} m"
         tvTrackName.text = "Track name: ${locTrack.locName}"
+        tvTrackDate.text = "Date: ${locTrack.date}"
+        tvTrackTime.text = "Track time: ${locTrack.time}"
     }
 }
