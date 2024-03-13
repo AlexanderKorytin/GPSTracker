@@ -1,13 +1,17 @@
 package com.example.korytingpstracker.core.ui
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.korytingpstracker.R
 import com.example.korytingpstracker.databinding.ActivityMainBinding
+import com.example.korytingpstracker.main_menu.data.service.LocationService
 
 class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
@@ -38,5 +42,12 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        val isGranted = ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED
+        if (isGranted) {
+            this.stopService(Intent(this, LocationService::class.java))
+        }
     }
 }

@@ -4,7 +4,7 @@
     <string name="tracks">Tracks</string>
     <string name="settings">Settings</string>
     <string name="dialog_back_loc_title">Permission for background geolocation</string>
-    <string name="dialog_back_loc_message">To record routes in the background, the application needs permission to access geodata in the background. If such permission is not granted, you will be redirected to the settings screen.</string>
+    <string name="dialog_back_loc_message">To record routes in the background, the application needs permission to access geodata in the background. Would you like to provide such permission?</string>
     <string name="dialog__loc_title">Permission for fine geolocation</string>
     <string name="dialog__loc_message">For normal operation, the application needs permission to access the geodata. You will be redirected to the settings screen.</string>
 

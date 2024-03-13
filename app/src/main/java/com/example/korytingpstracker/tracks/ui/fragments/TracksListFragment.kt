@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import com.example.korytingpstracker.databinding.FragmentTracksListBinding
 import com.example.korytingpstracker.main_menu.ui.models.LocationTrack
 import com.example.korytingpstracker.tracks.ui.LocationTrackAdapter
@@ -39,11 +38,12 @@ class TracksListFragment : Fragment() {
         binding.root.startAnimation(anim)
         viewModel.getAllLocTracks()
         binding.tvListTracks.adapter = adapter
-        viewModel.screenState.observe(viewLifecycleOwner){
-            when(it){
+        viewModel.screenState.observe(viewLifecycleOwner) {
+            when (it) {
                 is LocationTrackScreenState.Empty -> {
                     showEmpty()
                 }
+
                 is LocationTrackScreenState.Content -> {
                     showContent(it.data)
                 }
@@ -63,18 +63,19 @@ class TracksListFragment : Fragment() {
         _binding = null
     }
 
-    private fun showEmpty(){
+    private fun showEmpty() {
         binding.tvEmptyImage.isVisible = true
         binding.tvEmptyText.isVisible = true
         binding.tvListTracks.isVisible = false
     }
 
-    private fun showContent(list: List<LocationTrack>){
+    private fun showContent(list: List<LocationTrack>) {
         binding.tvEmptyImage.isVisible = false
         binding.tvEmptyText.isVisible = false
         binding.tvListTracks.isVisible = true
         adapter?.submitList(list)
     }
+
     companion object {
         fun newInstance(param1: String, param2: String) =
             TracksListFragment().apply {

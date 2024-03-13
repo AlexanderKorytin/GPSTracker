@@ -3,6 +3,7 @@ package com.example.korytingpstracker.main_menu.ui.fragments
 import android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -13,6 +14,7 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.korytingpstracker.R
@@ -173,7 +175,7 @@ class MainFragment : Fragment() {
                                 .setCancelable(false)
                                 .setTitle(requireContext().getString(R.string.dialog_back_loc_title))
                                 .setMessage(requireContext().getString(R.string.dialog_back_loc_message))
-                                .setPositiveButton(requireContext().getString(R.string.dialog_back_loc_neutral)) { _, _ ->
+                                .setPositiveButton(requireContext().getString(R.string.yes)) { _, _ ->
                                     isBackLocDialogShowed = false
                                     lifecycleScope.launch {
                                         requester.request(permission).collect { result ->
@@ -182,7 +184,14 @@ class MainFragment : Fragment() {
                                         }
                                     }
                                 }
-                        if (!isBackLocDialogShowed) {
+                                .setNegativeButton(getString(R.string.no)) { _, _ ->
+                                    isBackLocDialogShowed = true
+                                }
+                        val isShow = ActivityCompat.checkSelfPermission(
+                            requireContext(),
+                            ACCESS_BACKGROUND_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED
+                        if (isShow && !isBackLocDialogShowed) {
                             isBackLocDialogShowed = true
                             dialog.show()
                         }
