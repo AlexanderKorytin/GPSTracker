@@ -49,6 +49,7 @@ class MainFragment : Fragment() {
     private lateinit var myGPSProvider: GpsMyLocationProvider
     private var fineResult: PermissionResult? = null
     private var backResult: PermissionResult? = null
+    private var isFineLocDialogShowed = false
     private var isBackLocDialogShowed = false
     private val pointsList = mutableListOf<GeoPoint>()
     private var color = 0
@@ -91,7 +92,6 @@ class MainFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        checkPermission()
         polyLine?.outlinePaint?.color = color
     }
 
@@ -135,16 +135,8 @@ class MainFragment : Fragment() {
                 ACCESS_BACKGROUND_LOCATION,
             )
         )
-        lifecycleScope.launch(Dispatchers.Main + SupervisorJob()) {
-            val defer = lifecycleScope.async {
+        lifecycleScope.launch(Dispatchers.Main) {
                 checkPermissionLocation(arrayPermissionResult.toTypedArray())
-            }
-            try {
-                defer.await()
-            } catch (e: IllegalStateException) {
-                Toast.makeText(requireContext(), "", Toast.LENGTH_LONG).show()
-                requireActivity().finish()
-            }
         }
     }
 
@@ -318,6 +310,8 @@ class MainFragment : Fragment() {
 
     private fun startStopService() {
         if (!isServiceLocRunning) {
+            isBackLocDialogShowed = false
+            checkPermission()
             startLocService()
             mainViewModel.setStartTime()
             mainViewModel.startTimer()
