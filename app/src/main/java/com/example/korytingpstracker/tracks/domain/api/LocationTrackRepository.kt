@@ -1,7 +1,7 @@
 package com.example.korytingpstracker.tracks.domain.api
 
 import com.example.korytingpstracker.main_menu.ui.models.LocationTrack
-import com.example.korytingpstracker.tracks.data.entity.LocTrackEntity
+import com.example.korytingpstracker.tracks.data.db.entity.LocTrackEntity
 import kotlinx.coroutines.flow.Flow
 
 interface LocationTrackRepository {
