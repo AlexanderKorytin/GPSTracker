@@ -154,7 +154,7 @@ class LocationService : Service() {
         const val LOC_INTENT = " loc intent"
         private const val CHANEL_ID = "chanel_kolobok"
         private const val REQUEST_CODE = 10
-        private const val ERROR_BOUNDARY_SPEED = 0.2f
+        private const val ERROR_BOUNDARY_SPEED = 0.3f
         private const val UPDATE_TIME_DEFAULT = 5000L
 
     }
