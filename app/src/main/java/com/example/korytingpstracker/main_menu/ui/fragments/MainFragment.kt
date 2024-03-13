@@ -50,6 +50,7 @@ class MainFragment : Fragment() {
     private var isBackLocDialogShowed = false
     private val pointsList = mutableListOf<GeoPoint>()
     private var color = 0
+    private var trackTimeForSaved: String = ""
     private var locTrackForSaved = LocationTrack()
 
     override fun onCreateView(
@@ -258,6 +259,7 @@ class MainFragment : Fragment() {
     private fun updateTime() {
         mainViewModel.getCurrentTime().observe(viewLifecycleOwner) {
             binding.tvTime.text = "${binding.tvTime.text.split(':')[0]}: ${it}"
+            trackTimeForSaved = it
         }
     }
 
@@ -361,7 +363,8 @@ class MainFragment : Fragment() {
         locTrackForSaved = LocationTrack(
             distance = locData.distance,
             averageSpeed = locData.averageSpeed,
-            geoPointList = pointsList
+            geoPointList = pointsList,
+            time = trackTimeForSaved
         )
     }
 }
