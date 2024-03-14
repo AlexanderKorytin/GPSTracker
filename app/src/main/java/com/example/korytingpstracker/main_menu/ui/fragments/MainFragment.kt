@@ -13,7 +13,6 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -29,8 +28,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.markodevcic.peko.PermissionRequester
 import com.markodevcic.peko.PermissionResult
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.osmdroid.util.GeoPoint
@@ -136,7 +133,7 @@ class MainFragment : Fragment() {
             )
         )
         lifecycleScope.launch(Dispatchers.Main) {
-                checkPermissionLocation(arrayPermissionResult.toTypedArray())
+            checkPermissionLocation(arrayPermissionResult.toTypedArray())
         }
     }
 
@@ -352,12 +349,12 @@ class MainFragment : Fragment() {
     }
 
     private fun processingResult(locData: LocationTrack) = with(binding) {
-        tvSpeed.text =
-            "${tvSpeed.text.split(':')[0]}: ${locData.speed} km/h"
-        binding.tvDistance.text =
-            "${tvDistance.text.split(':')[0]}: ${locData.distance} m"
-        tvAverageSpeed.text =
-            "${tvAverageSpeed.text.split(':')[0]}: ${locData.averageSpeed} km/h"
+        val distnce = "${tvDistance.text.split(':')[0]}: ${locData.distance}"
+        val speed = "${tvSpeed.text.split(':')[0]}: ${locData.speed} km/h"
+        val averageSpeed = "${tvAverageSpeed.text.split(':')[0]}: ${locData.averageSpeed} km/h"
+        tvSpeed.text = speed
+        binding.tvDistance.text = distnce
+        tvAverageSpeed.text = averageSpeed
         if (pointsList.isEmpty()) {
             pointsList.addAll(locData.geoPointList)
             refreshPoints(pointsList)

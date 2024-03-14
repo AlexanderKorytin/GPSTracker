@@ -29,7 +29,7 @@ class MainViewModel(
     private val dataBaseInteractor: LocationTrackInteractor
 ) : ViewModel() {
 
-    private val correctionTime = 1000f
+    private val thousandFloat = 1000f
     private val correctionSpeed = 3.6f
     private var timer: Timer? = null
     private var startTime = 0L
@@ -58,7 +58,7 @@ class MainViewModel(
                     MainMenuScreenState.Content(
                         LocationTrack(
                             speed = String.format("%.1f", correctionSpeed * locData.speed),
-                            distance = String.format("%.1f", locData.distance),
+                            distance = getDistance(locData.distance),
                             averageSpeed = getAverageSpeed(distance = locData.distance),
                             geoPointList = locData.geoPointList,
                         )
@@ -68,10 +68,18 @@ class MainViewModel(
         }
     }
 
+    private fun getDistance(distance: Float): String {
+        return if (distance <= thousandFloat) {
+            "${String.format("%.1f", distance)} м"
+        } else {
+            "${String.format("%.1f", distance / thousandFloat)} kм"
+        }
+    }
+
     private fun getAverageSpeed(distance: Float): String {
         return String.format(
             "%.1f",
-            correctionSpeed * (distance / ((System.currentTimeMillis() - startTime) / correctionTime))
+            correctionSpeed * (distance / ((System.currentTimeMillis() - startTime) / thousandFloat))
         )
     }
 
