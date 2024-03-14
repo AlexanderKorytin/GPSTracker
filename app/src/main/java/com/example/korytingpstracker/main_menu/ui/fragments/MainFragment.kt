@@ -103,24 +103,32 @@ class MainFragment : Fragment() {
         _binding = null
     }
 
-    private fun initOsm() = with(binding) {
-        lifecycleScope.launch(Dispatchers.Main) {
-            mainViewModel.getLocationProviderValue().observe(viewLifecycleOwner) {
-                myGPSProvider = it
-            }
-            myLocationNewOverlay = MyLocationNewOverlay(myGPSProvider, tvMap)
-            myLocationNewOverlay.enableMyLocation()
-            myLocationNewOverlay.enableFollowLocation()
-            myLocationNewOverlay.runOnFirstFix {
-                tvMap.overlays.clear()
-                tvMap.overlays.add(myLocationNewOverlay)
-                tvMap.overlays.add(polyLine)
-            }
-            myLocationNewOverlay.enableFollowLocation()
-            tvMap.controller.setZoom(17.0)
+    private fun processingResult(locData: LocationTrack) = with(binding) {
+        val distnce = "${tvDistance.text.split(':')[0]}: ${locData.distance}"
+        val speed = "${tvSpeed.text.split(':')[0]}: ${locData.speed} km/h"
+        val averageSpeed = "${tvAverageSpeed.text.split(':')[0]}: ${locData.averageSpeed} km/h"
+        tvSpeed.text = speed
+        binding.tvDistance.text = distnce
+        tvAverageSpeed.text = averageSpeed
+        if (pointsList.isEmpty()) {
+            pointsList.addAll(locData.geoPointList)
+            refreshPoints(pointsList)
+        } else {
+            pointsList.add(locData.geoPointList[pointsList.size - 1])
+            addPoint(pointsList[pointsList.size - 1])
         }
+        locTrackForSaved = locData
     }
 
+    private fun addPoint(point: GeoPoint) {
+        polyLine?.addPoint(point)
+    }
+
+    private fun refreshPoints(list: List<GeoPoint>) {
+        list.forEach {
+            polyLine?.addPoint(it)
+        }
+    }
 
     private fun checkPermission() {
         val arrayPermissionResult = mutableListOf<String>()
@@ -245,6 +253,24 @@ class MainFragment : Fragment() {
     }
 
 
+    private fun initOsm() = with(binding) {
+        lifecycleScope.launch(Dispatchers.Main) {
+            mainViewModel.getLocationProviderValue().observe(viewLifecycleOwner) {
+                myGPSProvider = it
+            }
+            myLocationNewOverlay = MyLocationNewOverlay(myGPSProvider, tvMap)
+            myLocationNewOverlay.enableMyLocation()
+            myLocationNewOverlay.enableFollowLocation()
+            myLocationNewOverlay.runOnFirstFix {
+                tvMap.overlays.clear()
+                tvMap.overlays.add(myLocationNewOverlay)
+                tvMap.overlays.add(polyLine)
+            }
+            myLocationNewOverlay.enableFollowLocation()
+            tvMap.controller.setZoom(17.0)
+        }
+    }
+
     private fun startLocService() {
         requireContext().startForegroundService(
             Intent(
@@ -254,12 +280,6 @@ class MainFragment : Fragment() {
         )
     }
 
-    private fun updateTime() {
-        mainViewModel.getCurrentTime().observe(viewLifecycleOwner) {
-            binding.tvTime.text = "${binding.tvTime.text.split(':')[0]}: ${it}"
-            trackTimeForSaved = it
-        }
-    }
 
     private fun checkLocationServiseState() {
         mainViewModel.checkedLocationServiceState()
@@ -280,16 +300,6 @@ class MainFragment : Fragment() {
         buttonMyPosition.setOnClickListener(listner)
     }
 
-    private fun addPoint(point: GeoPoint) {
-        polyLine?.addPoint(point)
-    }
-
-    private fun refreshPoints(list: List<GeoPoint>) {
-        list.forEach {
-            polyLine?.addPoint(it)
-        }
-    }
-
     private fun onClick(): OnClickListener {
         return OnClickListener {
             when (it.id) {
@@ -302,6 +312,11 @@ class MainFragment : Fragment() {
                 }
             }
         }
+    }
+
+    fun showMyLocation() = with(binding) {
+        myLocationNewOverlay.enableFollowLocation()
+        tvMap.controller.setZoom(17.0)
     }
 
     private fun startStopService() {
@@ -333,11 +348,6 @@ class MainFragment : Fragment() {
         )
     }
 
-    fun showMyLocation() = with(binding) {
-        myLocationNewOverlay.enableFollowLocation()
-        tvMap.controller.setZoom(17.0)
-    }
-
     private fun setSaveDialog(locTrack: LocationTrack) {
         if (locTrack.geoPointList.isNotEmpty()) {
             val saveDialogEditText =
@@ -356,20 +366,10 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun processingResult(locData: LocationTrack) = with(binding) {
-        val distnce = "${tvDistance.text.split(':')[0]}: ${locData.distance}"
-        val speed = "${tvSpeed.text.split(':')[0]}: ${locData.speed} km/h"
-        val averageSpeed = "${tvAverageSpeed.text.split(':')[0]}: ${locData.averageSpeed} km/h"
-        tvSpeed.text = speed
-        binding.tvDistance.text = distnce
-        tvAverageSpeed.text = averageSpeed
-        if (pointsList.isEmpty()) {
-            pointsList.addAll(locData.geoPointList)
-            refreshPoints(pointsList)
-        } else {
-            pointsList.add(locData.geoPointList[pointsList.size - 1])
-            addPoint(pointsList[pointsList.size - 1])
+    private fun updateTime() {
+        mainViewModel.getCurrentTime().observe(viewLifecycleOwner) {
+            binding.tvTime.text = "${binding.tvTime.text.split(':')[0]}: ${it}"
+            trackTimeForSaved = it
         }
-        locTrackForSaved = locData
     }
 }
