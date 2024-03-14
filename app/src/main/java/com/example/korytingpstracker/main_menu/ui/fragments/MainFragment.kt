@@ -46,7 +46,6 @@ class MainFragment : Fragment() {
     private lateinit var myGPSProvider: GpsMyLocationProvider
     private var fineResult: PermissionResult? = null
     private var backResult: PermissionResult? = null
-    private var isFineLocDialogShowed = false
     private var isBackLocDialogShowed = false
     private val pointsList = mutableListOf<GeoPoint>()
     private var color = 0
@@ -319,10 +318,19 @@ class MainFragment : Fragment() {
             activity?.stopService(Intent(activity, LocationService::class.java))
             mainViewModel.stopTimer()
             binding.buttonStartStop.setImageResource(R.drawable.ic_play)
-            setSaveDialog(locTrackForSaved)
+            setSaveDialog(getTrackForDB())
             locTrackForSaved = LocationTrack()
         }
         isServiceLocRunning = !isServiceLocRunning
+    }
+
+    fun getTrackForDB(): LocationTrack {
+        return LocationTrack(
+            distance = locTrackForSaved.distance,
+            averageSpeed = locTrackForSaved.averageSpeed,
+            geoPointList = pointsList,
+            time = trackTimeForSaved
+        )
     }
 
     fun showMyLocation() = with(binding) {
@@ -362,11 +370,6 @@ class MainFragment : Fragment() {
             pointsList.add(locData.geoPointList[pointsList.size - 1])
             addPoint(pointsList[pointsList.size - 1])
         }
-        locTrackForSaved = LocationTrack(
-            distance = locData.distance,
-            averageSpeed = locData.averageSpeed,
-            geoPointList = pointsList,
-            time = trackTimeForSaved
-        )
+        locTrackForSaved = locData
     }
 }
