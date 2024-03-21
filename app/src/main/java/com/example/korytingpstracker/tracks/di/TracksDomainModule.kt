@@ -8,7 +8,7 @@ import org.koin.dsl.module
 
 val tracksDomainModule = module {
     single<LocationTrackRepository> {
-        LocTrackRepositoryImpl(db = get())
+        LocTrackRepositoryImpl(appDataBase = get())
     }
 
     factory<LocationTrackInteractor> {

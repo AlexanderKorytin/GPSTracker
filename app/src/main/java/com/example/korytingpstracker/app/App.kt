@@ -17,7 +17,6 @@ const val APP_SETTINGS_PREF_KEY = "App settings"
 const val IS_NEED_SHOW_DIALOG = "is need show dialog"
 
 class App : Application() {
-
     override fun onCreate() {
         super.onCreate()
         PermissionRequester.initialize(applicationContext)
