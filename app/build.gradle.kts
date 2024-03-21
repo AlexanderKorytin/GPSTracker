@@ -66,7 +66,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("com.markodevcic:peko:3.0.4")
     //location
-    implementation("com.google.android.gms:play-services-location:21.1.0")
+    implementation("com.google.android.gms:play-services-location:21.2.0")
     //Room
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
