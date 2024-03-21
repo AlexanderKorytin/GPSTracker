@@ -5,7 +5,6 @@ import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.LayoutInflater
@@ -17,7 +16,6 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.korytingpstracker.R
-import com.example.korytingpstracker.app.App
 import com.example.korytingpstracker.databinding.EditTextSaveDialogBinding
 import com.example.korytingpstracker.databinding.FragmentMainBinding
 import com.example.korytingpstracker.main_menu.data.service.LocationService
@@ -27,6 +25,7 @@ import com.example.korytingpstracker.main_menu.ui.viewmodel.MainViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.markodevcic.peko.PermissionRequester
 import com.markodevcic.peko.PermissionResult
+import com.markodevcic.peko.grantedPermissions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -155,42 +154,26 @@ class MainFragment : Fragment() {
                 }
 
                 ACCESS_BACKGROUND_LOCATION -> {
-                    if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
-                        requester.request(permission).collect { result ->
-                            backResult = result
-                            getResultBackGroundLocation(result)
-                        }
-                    }
-                    if (
-                        (Build.VERSION.SDK_INT != Build.VERSION_CODES.Q)
-                        && fineResult is PermissionResult.Granted
-                        && backResult !is PermissionResult.Granted
-                    ) {
-                        val dialog =
-                            MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialogTheme)
-                                .setCancelable(false)
-                                .setTitle(requireContext().getString(R.string.dialog_back_loc_title))
-                                .setMessage(requireContext().getString(R.string.dialog_back_loc_message))
-                                .setPositiveButton(requireContext().getString(R.string.yes)) { _, _ ->
-                                    isBackLocDialogShowed = false
-                                    lifecycleScope.launch {
-                                        requester.request(permission).collect { result ->
-                                            backResult = result
-                                            getResultBackGroundLocation(result)
-                                        }
-                                    }
+                    val dialog =
+                        MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialogTheme)
+                            .setCancelable(false)
+                            .setTitle(requireContext().getString(R.string.dialog_back_loc_title))
+                            .setMessage(requireContext().getString(R.string.dialog_back_loc_message))
+                            .setPositiveButton(requireContext().getString(R.string.yes)) { _, _ ->
+                                isBackLocDialogShowed = true
+                                lifecycleScope.launch {
+                                    requester.request(permission).grantedPermissions()
                                 }
-                                .setNegativeButton(getString(R.string.no)) { _, _ ->
-                                    isBackLocDialogShowed = true
-                                }
-                        val isShow = ActivityCompat.checkSelfPermission(
-                            requireContext(),
-                            ACCESS_BACKGROUND_LOCATION
-                        ) != PackageManager.PERMISSION_GRANTED
-                        if (isShow && !isBackLocDialogShowed) {
-                            isBackLocDialogShowed = true
-                            dialog.show()
-                        }
+                            }
+                            .setNegativeButton(getString(R.string.no)) { _, _ ->
+                                isBackLocDialogShowed = true
+                            }
+                    val isShow = ActivityCompat.checkSelfPermission(
+                        requireContext(),
+                        ACCESS_BACKGROUND_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED
+                    if (isShow && !isBackLocDialogShowed && fineResult is PermissionResult.Granted) {
+                        dialog.show()
                     }
                 }
             }
@@ -226,32 +209,6 @@ class MainFragment : Fragment() {
             }
         }
     }
-
-    private fun getResultBackGroundLocation(result: PermissionResult) {
-        when (result) {
-            // Пользователь дал разрешение, можно продолжать работу
-            is PermissionResult.Granted -> {
-                App.needBackGroundLocPerm = false
-                mainViewModel.saveIsNeedShowDialog(App.needBackGroundLocPerm)
-            }
-            //Пользователь отказал в предоставлении разрешения
-            is PermissionResult.Denied.NeedsRationale -> {
-
-            }
-            // Запрещено навсегда, перезапрашивать нет смысла, предлагаем пройти в настройки
-            is PermissionResult.Denied.DeniedPermanently -> {
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                intent.data = Uri.fromParts("package", requireActivity().packageName, null)
-                requireActivity().startActivity(intent)
-            }
-            // Canceled
-            is PermissionResult.Cancelled -> {
-                return
-            }
-        }
-    }
-
 
     private fun initOsm() = with(binding) {
         lifecycleScope.launch(Dispatchers.Main) {
@@ -321,7 +278,6 @@ class MainFragment : Fragment() {
 
     private fun startStopService() {
         if (!isServiceLocRunning) {
-            isBackLocDialogShowed = false
             checkPermission()
             startLocService()
             mainViewModel.setStartTime()
