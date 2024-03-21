@@ -44,7 +44,6 @@ class MainFragment : Fragment() {
     private lateinit var myLocationNewOverlay: MyLocationNewOverlay
     private lateinit var myGPSProvider: GpsMyLocationProvider
     private var fineResult: PermissionResult? = null
-    private var backResult: PermissionResult? = null
     private var isBackLocDialogShowed = false
     private val pointsList = mutableListOf<GeoPoint>()
     private var color = 0
@@ -236,7 +235,6 @@ class MainFragment : Fragment() {
             )
         )
     }
-
 
     private fun checkLocationServiseState() {
         mainViewModel.checkedLocationServiceState()

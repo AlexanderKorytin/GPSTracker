@@ -111,11 +111,6 @@ class MainViewModel(
     fun checkedLocationServiceState() {
         stateLocService.value = (mainInteractor.getStateSeervice())
     }
-
-    fun saveIsNeedShowDialog(isNeed: Boolean) {
-        settingsInteractor.saveIsNeedDialogShow(isNeed)
-    }
-
     fun getProvider() {
         locationProvider.postValue(mainInteractor.getLocationProvider().provider)
     }

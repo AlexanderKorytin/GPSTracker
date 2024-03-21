@@ -1,7 +1,6 @@
 package com.example.korytingpstracker.app
 
 import android.app.Application
-import androidx.appcompat.app.AppCompatActivity
 import com.example.korytingpstracker.main_menu.di.mainDataModule
 import com.example.korytingpstracker.main_menu.di.mainDomainModule
 import com.example.korytingpstracker.main_menu.di.mainVMModule
@@ -18,19 +17,10 @@ const val APP_SETTINGS_PREF_KEY = "App settings"
 const val IS_NEED_SHOW_DIALOG = "is need show dialog"
 
 class App : Application() {
-    companion object {
-        var needBackGroundLocPerm = true
-    }
 
     override fun onCreate() {
         super.onCreate()
-
         PermissionRequester.initialize(applicationContext)
-
-        needBackGroundLocPerm =
-            getSharedPreferences(APP_SETTINGS_PREF_KEY, AppCompatActivity.MODE_PRIVATE)
-                .getBoolean(IS_NEED_SHOW_DIALOG, true)
-
         startKoin {
             androidContext(applicationContext)
             modules(
@@ -46,7 +36,5 @@ class App : Application() {
                 trackViewModelModule
             )
         }
-
     }
-
 }

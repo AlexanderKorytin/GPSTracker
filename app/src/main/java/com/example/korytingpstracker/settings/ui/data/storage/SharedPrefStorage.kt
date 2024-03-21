@@ -12,10 +12,6 @@ class SharedPrefStorage(
     private val settingsPref: SharedPreferences,
     private val context: Context
 ) : SettingsStorage {
-    override fun saveIsNeedDialogShow(value: Boolean) {
-        sharedPreferences.edit().putBoolean(IS_NEED_SHOW_DIALOG, value).apply()
-    }
-
     override fun getColorLocationTrackLine(): Int {
         val colorLineCurrent = settingsPref.getString(
             context.getString(AppSettingsPrefKeys.COLORLINE.value),
