@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:elevation="16dp"
     android:layout_margin="16dp"
-    app:cardCornerRadius="8dp">
+    android:elevation="32dp"
+    app:cardCornerRadius="16dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -17,57 +17,90 @@
             android:id="@+id/tv_track_icon"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
+            android:paddingHorizontal="8dp"
             android:src="@drawable/btn_moreinfo"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-           app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <ImageView
+            android:id="@+id/bot_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_delete"
+            android:backgroundTint="@color/tabtextcolor"
+            android:padding="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <EditText
             android:id="@+id/tv_track_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textAllCaps="false"
-            android:textSize="20sp"
+            android:background="null"
+            android:focusable="false"
             android:gravity="center"
+            android:inputType="none"
             android:paddingBottom="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:textAllCaps="false"
+            android:textColor="@color/app_background"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@id/bot_delete"
             app:layout_constraintStart_toEndOf="@id/tv_track_icon"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="123"/>
+            tools:text="name" />
 
-        <TextView
+        <EditText
             android:id="@+id/tv_track_distance"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_distance"
+            android:background="null"
+            android:focusable="false"
+            android:inputType="none"
+            android:paddingVertical="8dp"
             android:textAllCaps="false"
+            android:textColor="@color/tabtextcolor"
             android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/bot_delete"
             app:layout_constraintStart_toEndOf="@id/tv_track_icon"
             app:layout_constraintTop_toBottomOf="@id/tv_track_name"
-            tools:text="123"/>
+            tools:text="12,3 km" />
 
-        <TextView
+        <EditText
             android:id="@+id/tv_track_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_date"
+            android:background="null"
+            android:focusable="false"
+            android:inputType="none"
+            android:paddingVertical="8dp"
             android:textAllCaps="false"
+            android:textColor="@color/tabtextcolor"
             android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/bot_delete"
             app:layout_constraintStart_toEndOf="@id/tv_track_icon"
             app:layout_constraintTop_toBottomOf="@id/tv_track_distance"
-            tools:text="123"/>
+            tools:text="01.02.1991" />
 
-        <TextView
+        <EditText
             android:id="@+id/tv_track_time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_time"
+            android:background="null"
+            android:focusable="false"
+            android:inputType="none"
+            android:paddingVertical="8dp"
             android:textAllCaps="false"
+            android:textColor="@color/tabtextcolor"
             android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/bot_delete"
             app:layout_constraintStart_toEndOf="@id/tv_track_icon"
             app:layout_constraintTop_toBottomOf="@id/tv_track_date"
-            tools:text="123"/>
+            tools:text="12:30" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
