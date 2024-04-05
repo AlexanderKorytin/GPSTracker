@@ -7,9 +7,9 @@ import com.example.korytingpstracker.main_menu.ui.models.LocationTrack
 class LocationTrackViewHolder(private val binding: LocationTrackItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(locTrack: LocationTrack) = with(binding) {
-        tvTrackDistance.text = "Distance: ${locTrack.distance} m"
-        tvTrackName.text = "Track name: ${locTrack.locName}"
-        tvTrackDate.text = "Date: ${locTrack.date}"
-        tvTrackTime.text = "Track time: ${locTrack.time}"
+        tvTrackDistance.setText("Distance: ${locTrack.distance} m")
+        tvTrackName.setText("Track name: ${locTrack.locName}")
+        tvTrackDate.setText("Date: ${locTrack.date}")
+        tvTrackTime.setText("Track time: ${locTrack.time}")
     }
 }
