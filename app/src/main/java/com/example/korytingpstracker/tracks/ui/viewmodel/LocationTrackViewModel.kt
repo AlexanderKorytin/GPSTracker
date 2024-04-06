@@ -3,6 +3,7 @@ package com.example.korytingpstracker.tracks.ui.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.korytingpstracker.main_menu.ui.models.LocationTrack
 import com.example.korytingpstracker.tracks.domain.api.LocationTrackInteractor
 import com.example.korytingpstracker.tracks.ui.models.LocationTrackScreenState
 import kotlinx.coroutines.Dispatchers
@@ -24,4 +25,10 @@ class LocationTrackViewModel(private val interactor: LocationTrackInteractor) : 
         }
     }
 
+    fun deleteCurrentTrack(track: LocationTrack){
+        viewModelScope.launch(Dispatchers.IO) {
+            interactor.deleteLocTrack(track)
+            getAllLocTracks()
+        }
+    }
 }

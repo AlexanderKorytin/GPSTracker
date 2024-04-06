@@ -6,14 +6,21 @@ import androidx.recyclerview.widget.ListAdapter
 import com.example.korytingpstracker.databinding.LocationTrackItemBinding
 import com.example.korytingpstracker.main_menu.ui.models.LocationTrack
 
-class LocationTrackAdapter(): ListAdapter<LocationTrack, LocationTrackViewHolder>(LocationTrackDiffUtil()) {
+class LocationTrackAdapter(private val clickLoistner:(LocationTrack) -> Unit) :
+    ListAdapter<LocationTrack, LocationTrackViewHolder>(LocationTrackDiffUtil()) {
+
+    private var locTrac: LocationTrack? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationTrackViewHolder {
         val layoutInspector = LayoutInflater.from(parent.context)
         val binding = LocationTrackItemBinding.inflate(layoutInspector, parent, false)
-        return LocationTrackViewHolder(binding)
+        return LocationTrackViewHolder(binding, clickLoistner)
     }
 
     override fun onBindViewHolder(holder: LocationTrackViewHolder, position: Int) {
         holder.bind(currentList[position])
+    }
+
+    interface TrackClickListner{
+        fun onDeleteBotClick(track: LocationTrack)
     }
 }

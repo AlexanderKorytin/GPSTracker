@@ -18,8 +18,12 @@ class TracksListFragment : Fragment() {
     private var _binding: FragmentTracksListBinding? = null
     private val binding get() = _binding!!
     private val viewModel by viewModel<LocationTrackViewModel>()
-    private var adapter: LocationTrackAdapter? = LocationTrackAdapter()
-
+    private var adapter: LocationTrackAdapter? = LocationTrackAdapter {
+        deleteTrack?.let { delete ->
+            delete(it)
+        }
+    }
+    private var deleteTrack: ((track: LocationTrack) -> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,6 +52,7 @@ class TracksListFragment : Fragment() {
                     showContent(it.data)
                 }
             }
+            deleteTrack = { viewModel.deleteCurrentTrack(it) }
         }
     }
 
