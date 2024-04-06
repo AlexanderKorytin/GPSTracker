@@ -10,6 +10,7 @@ import java.time.ZoneOffset
 
 fun map(locTrackEntity: LocTrackEntity): LocationTrack {
     return LocationTrack(
+        id = locTrackEntity.id,
         locName = locTrackEntity.trackName,
         averageSpeed = locTrackEntity.averageSpeed,
         distance = locTrackEntity.distance,
@@ -24,9 +25,9 @@ fun map(locTrackEntity: LocTrackEntity): LocationTrack {
 
 fun map(locTrack: LocationTrack): LocTrackEntity {
     return LocTrackEntity(
+        id = locTrack.id,
         trackName = locTrack.locName.ifEmpty {
-            LocalDateTime.now()
-                .toEpochSecond(ZoneOffset.UTC).toString()
+           "Empty Name"
         },
         time = locTrack.time,
         distance = locTrack.distance,

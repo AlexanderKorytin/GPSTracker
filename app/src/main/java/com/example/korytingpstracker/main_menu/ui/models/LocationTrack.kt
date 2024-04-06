@@ -3,6 +3,7 @@ package com.example.korytingpstracker.main_menu.ui.models
 import org.osmdroid.util.GeoPoint
 
 data class LocationTrack(
+    val id: Long? = null,
     val locName: String = EMPTY_STR,
     val speed: String = SPEED_START,
     val date: String = EMPTY_STR,

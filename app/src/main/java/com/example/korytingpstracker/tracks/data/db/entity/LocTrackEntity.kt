@@ -9,8 +9,8 @@ import java.time.ZoneOffset
 
 @Entity(tableName = "Locations_tracks")
 data class LocTrackEntity(
-    @PrimaryKey() @ColumnInfo(name = "trackId")
-    val id: Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "trackId")
+    val id: Long? = null,
     val date: String = getDate(),
     val time: String,
     val trackName: String,
