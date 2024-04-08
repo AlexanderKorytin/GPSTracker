@@ -7,23 +7,31 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.example.korytingpstracker.R
 import com.example.korytingpstracker.databinding.FragmentTracksListBinding
 import com.example.korytingpstracker.main_menu.ui.models.LocationTrack
 import com.example.korytingpstracker.tracks.ui.LocationTrackAdapter
 import com.example.korytingpstracker.tracks.ui.models.LocationTrackScreenState
 import com.example.korytingpstracker.tracks.ui.viewmodel.LocationTrackViewModel
+import com.example.korytingpstracker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TracksListFragment : Fragment() {
     private var _binding: FragmentTracksListBinding? = null
     private val binding get() = _binding!!
     private val viewModel by viewModel<LocationTrackViewModel>()
-    private var adapter: LocationTrackAdapter? = LocationTrackAdapter {
-        deleteTrack?.let { delete ->
-            delete(it)
+    private var adapter: LocationTrackAdapter? = LocationTrackAdapter(
+        { locTrack ->
+            deleteTrack?.let { delete -> delete(locTrack) }
+        },
+        { locTrack ->
+            clickTrack?.let { clickDebounce -> clickDebounce(locTrack) }
         }
-    }
+    )
     private var deleteTrack: ((track: LocationTrack) -> Unit)? = null
+    private var clickTrack: ((track: LocationTrack) -> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -81,7 +89,19 @@ class TracksListFragment : Fragment() {
         adapter?.submitList(list)
     }
 
+    private fun setOnTrackClickListener() {
+        clickTrack = debounce(
+            CLICK_DEBOUNCE_DELAY_MILLIS,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { vacancyItem ->
+            // val vacancyBundle = bundleOf(VACANCY_ID to vacancyItem.id)
+            findNavController().navigate(R.id.action_tracksListFragment_to_currentTrackFragment)
+        }
+    }
+
     companion object {
+        private const val CLICK_DEBOUNCE_DELAY_MILLIS = 300L
         fun newInstance(param1: String, param2: String) =
             TracksListFragment().apply {
                 arguments = Bundle().apply {
