@@ -102,11 +102,5 @@ class TracksListFragment : Fragment() {
 
     companion object {
         private const val CLICK_DEBOUNCE_DELAY_MILLIS = 300L
-        fun newInstance(param1: String, param2: String) =
-            TracksListFragment().apply {
-                arguments = Bundle().apply {
-
-                }
-            }
     }
 }
