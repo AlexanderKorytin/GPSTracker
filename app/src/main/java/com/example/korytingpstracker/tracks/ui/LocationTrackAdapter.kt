@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.example.korytingpstracker.databinding.LocationTrackItemBinding
 import com.example.korytingpstracker.main_menu.ui.models.LocationTrack
 
-class LocationTrackAdapter(private val clickListner:(LocationTrack) -> Unit) :
+class LocationTrackAdapter(private val clickListner: (LocationTrack) -> Unit) :
     ListAdapter<LocationTrack, LocationTrackViewHolder>(LocationTrackDiffUtil()) {
 
     private var locTrac: LocationTrack? = null

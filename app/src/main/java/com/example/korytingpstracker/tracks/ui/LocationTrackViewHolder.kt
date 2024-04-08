@@ -6,7 +6,7 @@ import com.example.korytingpstracker.main_menu.ui.models.LocationTrack
 
 class LocationTrackViewHolder(
     private val binding: LocationTrackItemBinding,
-    private val clickListner:(LocationTrack) -> Unit
+    private val clickListner: (LocationTrack) -> Unit
 ) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(locTrack: LocationTrack) = with(binding) {
