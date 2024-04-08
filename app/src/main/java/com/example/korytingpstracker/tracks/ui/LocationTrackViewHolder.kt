@@ -6,7 +6,7 @@ import com.example.korytingpstracker.main_menu.ui.models.LocationTrack
 
 class LocationTrackViewHolder(
     private val binding: LocationTrackItemBinding,
-    private val clickListner: (LocationTrack) -> Unit
+    private val clickListener: (LocationTrack) -> Unit
 ) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(locTrack: LocationTrack) = with(binding) {
@@ -15,7 +15,7 @@ class LocationTrackViewHolder(
         tvTrackDate.setText("Date: ${locTrack.date}")
         tvTrackTime.setText("Track time: ${locTrack.time}")
         botDelete.setOnClickListener {
-            clickListner(locTrack)
+            clickListener(locTrack)
         }
     }
 }
