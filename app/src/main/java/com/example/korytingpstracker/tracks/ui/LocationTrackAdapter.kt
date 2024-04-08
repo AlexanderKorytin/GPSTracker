@@ -20,5 +20,8 @@ class LocationTrackAdapter(
 
     override fun onBindViewHolder(holder: LocationTrackViewHolder, position: Int) {
         holder.bind(currentList[position])
+        holder.itemView.setOnClickListener {
+            onItemClick(currentList[position])
+        }
     }
 }

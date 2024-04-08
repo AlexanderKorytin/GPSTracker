@@ -18,7 +18,7 @@ class LocationTrackViewHolder(
         botDelete.setOnClickListener {
             clickListenerDelete(locTrack)
         }
-        root.setOnClickListener {
+        tvTrackItem.setOnClickListener {
             clickListenerItem(locTrack)
         }
     }

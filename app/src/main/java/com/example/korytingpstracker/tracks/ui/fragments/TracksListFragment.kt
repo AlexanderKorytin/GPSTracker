@@ -72,9 +72,6 @@ class TracksListFragment : Fragment() {
             com.google.android.material.R.anim.abc_fade_out
         )
         binding.root.startAnimation(anim)
-        binding.tvListTracks.adapter = null
-        adapter = null
-        _binding = null
     }
 
     private fun showEmpty() {
