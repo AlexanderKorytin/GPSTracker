@@ -42,7 +42,7 @@ class LocationService : Service() {
             super.onLocationResult(locResult)
             val currentLocation = locResult.lastLocation
             if (lastLocation != null && currentLocation != null) {
-                if (currentLocation.speed > ERROR_BOUNDARY_SPEED) {
+               // if (currentLocation.speed > ERROR_BOUNDARY_SPEED) {
                     distance += currentLocation.let { lastLocation?.distanceTo(it) } ?: 0.0f
                     geoPointList.add(GeoPoint(currentLocation.latitude, currentLocation.longitude))
                     val locData = LocationDto(
@@ -52,7 +52,7 @@ class LocationService : Service() {
                     )
                     sendLocationData(locData)
                 }
-            }
+          //  }
             lastLocation = currentLocation
             Log.d("MyLog", "Distance: ${distance}")
         }
