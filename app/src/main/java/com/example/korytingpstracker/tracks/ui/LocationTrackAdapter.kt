@@ -9,7 +9,6 @@ import com.example.korytingpstracker.main_menu.ui.models.LocationTrack
 class LocationTrackAdapter(private val clickListener: (LocationTrack) -> Unit) :
     ListAdapter<LocationTrack, LocationTrackViewHolder>(LocationTrackDiffUtil()) {
 
-    private var locTrac: LocationTrack? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationTrackViewHolder {
         val layoutInspector = LayoutInflater.from(parent.context)
         val binding = LocationTrackItemBinding.inflate(layoutInspector, parent, false)
