@@ -25,7 +25,7 @@ class LocationTrackViewModel(private val interactor: LocationTrackInteractor) : 
         }
     }
 
-    fun deleteCurrentTrack(track: LocationTrack){
+    fun deleteCurrentTrack(track: LocationTrack) {
         viewModelScope.launch(Dispatchers.IO) {
             interactor.deleteLocTrack(track)
             getAllLocTracks()

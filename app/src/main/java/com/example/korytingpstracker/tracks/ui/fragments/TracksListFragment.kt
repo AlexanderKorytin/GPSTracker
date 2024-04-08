@@ -60,6 +60,7 @@ class TracksListFragment : Fragment() {
                     showContent(it.data)
                 }
             }
+            setOnTrackClickListener()
             deleteTrack = { viewModel.deleteCurrentTrack(it) }
         }
     }
@@ -94,7 +95,7 @@ class TracksListFragment : Fragment() {
             CLICK_DEBOUNCE_DELAY_MILLIS,
             viewLifecycleOwner.lifecycleScope,
             false
-        ) { vacancyItem ->
+        ) {
             // val vacancyBundle = bundleOf(VACANCY_ID to vacancyItem.id)
             findNavController().navigate(R.id.action_tracksListFragment_to_currentTrackFragment)
         }

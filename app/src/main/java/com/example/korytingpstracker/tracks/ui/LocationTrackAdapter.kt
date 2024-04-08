@@ -15,13 +15,10 @@ class LocationTrackAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationTrackViewHolder {
         val layoutInspector = LayoutInflater.from(parent.context)
         val binding = LocationTrackItemBinding.inflate(layoutInspector, parent, false)
-        return LocationTrackViewHolder(binding, onDeleteClick)
+        return LocationTrackViewHolder(binding, onDeleteClick, onItemClick)
     }
 
     override fun onBindViewHolder(holder: LocationTrackViewHolder, position: Int) {
         holder.bind(currentList[position])
-        holder.itemView.setOnClickListener {
-            onDeleteClick(currentList[holder.adapterPosition])
-        }
     }
 }
