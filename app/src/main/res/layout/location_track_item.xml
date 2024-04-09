@@ -2,7 +2,6 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/tv_track_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
@@ -11,6 +10,7 @@
     app:cardCornerRadius="16dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/tv_track_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"
@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/ic_delete"
-            android:backgroundTint="@color/tabtextcolor"
+            android:backgroundTint="@color/tab_text_color"
             android:padding="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -51,50 +51,83 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="name" />
 
-        <com.google.android.material.button.MaterialButton
+        <TextView
             android:id="@+id/tv_track_distance"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
             android:gravity="start"
             android:paddingVertical="8dp"
             android:textAllCaps="false"
-            android:textColor="@color/tabtextcolor"
+            android:textColor="@color/tab_text_color"
             android:textSize="20sp"
-            app:icon="@drawable/ic_distance"
             app:layout_constraintEnd_toStartOf="@id/bot_delete"
-            app:layout_constraintStart_toEndOf="@id/tv_track_icon"
+            app:layout_constraintStart_toEndOf="@id/ic_distance"
             app:layout_constraintTop_toBottomOf="@id/tv_track_name"
             tools:text="12,3 km" />
 
-        <com.google.android.material.button.MaterialButton
+        <ImageView
+            android:id="@+id/ic_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_distance"
+            android:backgroundTint="@color/tab_text_color"
+            app:layout_constraintBottom_toBottomOf="@id/tv_track_distance"
+            app:layout_constraintEnd_toStartOf="@id/tv_track_distance"
+            app:layout_constraintStart_toEndOf="@id/tv_track_icon"
+            app:layout_constraintTop_toTopOf="@id/tv_track_distance" />
+
+        <TextView
             android:id="@+id/tv_track_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
             android:gravity="start"
             android:paddingVertical="8dp"
             android:textAllCaps="false"
-            android:textColor="@color/tabtextcolor"
+            android:textColor="@color/tab_text_color"
             android:textSize="20sp"
-            app:icon="@drawable/ic_date"
             app:layout_constraintEnd_toStartOf="@id/bot_delete"
-            app:layout_constraintStart_toEndOf="@id/tv_track_icon"
+            app:layout_constraintStart_toEndOf="@id/ic_date"
             app:layout_constraintTop_toBottomOf="@id/tv_track_distance"
             tools:text="01.02.1991" />
 
-        <com.google.android.material.button.MaterialButton
+        <ImageView
+            android:id="@+id/ic_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_date"
+            android:backgroundTint="@color/tab_text_color"
+            app:layout_constraintBottom_toBottomOf="@id/tv_track_date"
+            app:layout_constraintEnd_toStartOf="@id/tv_track_date"
+            app:layout_constraintStart_toEndOf="@id/tv_track_icon"
+            app:layout_constraintTop_toTopOf="@id/tv_track_date" />
+
+        <TextView
             android:id="@+id/tv_track_time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
             android:gravity="start"
             android:paddingVertical="8dp"
             android:textAllCaps="false"
-            android:textColor="@color/tabtextcolor"
+            android:textColor="@color/tab_text_color"
             android:textSize="20sp"
-            app:icon="@drawable/ic_time"
             app:layout_constraintEnd_toStartOf="@id/bot_delete"
-            app:layout_constraintStart_toEndOf="@id/tv_track_icon"
+            app:layout_constraintStart_toEndOf="@id/ic_time"
             app:layout_constraintTop_toBottomOf="@id/tv_track_date"
             tools:text="12:30" />
+
+        <ImageView
+            android:id="@+id/ic_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_time"
+            android:backgroundTint="@color/tab_text_color"
+            app:layout_constraintBottom_toBottomOf="@id/tv_track_time"
+            app:layout_constraintEnd_toStartOf="@id/tv_track_time"
+            app:layout_constraintStart_toEndOf="@id/tv_track_icon"
+            app:layout_constraintTop_toTopOf="@id/tv_track_time" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
