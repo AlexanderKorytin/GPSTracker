@@ -13,7 +13,7 @@ import com.example.korytingpstracker.R
 import com.example.korytingpstracker.databinding.FragmentTracksListBinding
 import com.example.korytingpstracker.main_menu.ui.models.LocationTrack
 import com.example.korytingpstracker.tracks.ui.LocationTrackAdapter
-import com.example.korytingpstracker.tracks.ui.models.LocationTrackScreenState
+import com.example.korytingpstracker.tracks.ui.models.LocationTracksScreenState
 import com.example.korytingpstracker.tracks.ui.viewmodel.LocationTrackViewModel
 import com.example.korytingpstracker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -45,18 +45,18 @@ class TracksListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val anim = AnimationUtils.loadAnimation(
             requireContext(),
-            com.google.android.material.R.anim.abc_fade_in
+            R.anim.slide_in_right
         )
         binding.root.startAnimation(anim)
         viewModel.getAllLocTracks()
         binding.tvListTracks.adapter = adapter
-        viewModel.screenState.observe(viewLifecycleOwner) {
+        viewModel.listTracksScreenState.observe(viewLifecycleOwner) {
             when (it) {
-                is LocationTrackScreenState.Empty -> {
+                is LocationTracksScreenState.Empty -> {
                     showEmpty()
                 }
 
-                is LocationTrackScreenState.Content -> {
+                is LocationTracksScreenState.Content -> {
                     showContent(it.data)
                 }
             }
@@ -69,7 +69,7 @@ class TracksListFragment : Fragment() {
         super.onDestroyView()
         val anim = AnimationUtils.loadAnimation(
             requireContext(),
-            com.google.android.material.R.anim.abc_fade_out
+            R.anim.slide_out_left
         )
         binding.root.startAnimation(anim)
     }
@@ -93,8 +93,10 @@ class TracksListFragment : Fragment() {
             viewLifecycleOwner.lifecycleScope,
             false
         ) {
-            // val vacancyBundle = bundleOf(VACANCY_ID to vacancyItem.id)
-            findNavController().navigate(R.id.action_tracksListFragment_to_currentTrackFragment)
+            findNavController().navigate(
+                R.id.action_tracksListFragment_to_currentTrackFragment,
+                CurrentTrackFragment.newInstance(it.id)
+            )
         }
     }
 
