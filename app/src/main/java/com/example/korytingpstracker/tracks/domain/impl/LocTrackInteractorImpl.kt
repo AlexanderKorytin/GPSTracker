@@ -19,6 +19,10 @@ class LocTrackInteractorImpl(private val locRepository: LocationTrackRepository)
         return locRepository.getLocTrackByName(trackName)
     }
 
+    override suspend fun getLocTrackById(trackId: Long): Flow<LocationTrack> {
+        return locRepository.getLocTrackById(trackId)
+    }
+
     override suspend fun deleteLocTrack(locTrack: LocationTrack) {
         locRepository.deleteLocTrack(locTrack)
     }
