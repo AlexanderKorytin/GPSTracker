@@ -6,6 +6,6 @@ import org.koin.dsl.module
 
 val trackViewModelModule = module {
     viewModel<LocationTrackViewModel> {
-        LocationTrackViewModel(interactor = get())
+        LocationTrackViewModel(dataBaseInteractor = get(), settingsInteractor = get())
     }
 }
