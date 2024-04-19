@@ -16,9 +16,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
-    </org.osmdroid.views.MapView>
-
+        app:layout_constraintVertical_bias="0.0"></org.osmdroid.views.MapView>
 
     <TextView
         android:id="@+id/tv_name"
@@ -30,12 +28,12 @@
         android:paddingHorizontal="8dp"
         android:text="Name"
         android:textColor="#000000"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_time"
+        android:id="@+id/tv_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -57,19 +55,20 @@
         android:text="Average speed: 0.0 km/h"
         android:textColor="#000000"
         app:layout_constraintBottom_toTopOf="@+id/tv_distance"
-        app:layout_constraintStart_toStartOf="@+id/tv_time"
-        app:layout_constraintTop_toBottomOf="@+id/tv_time" />
+        app:layout_constraintStart_toStartOf="@+id/tv_date"
+        app:layout_constraintTop_toBottomOf="@+id/tv_date" />
 
     <TextView
         android:id="@+id/tv_distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:background="#99FFFFFF"
         android:paddingHorizontal="8dp"
         android:text="Distance: 0 m"
         android:textColor="#000000"
-        tools:layout_editor_absoluteX="10dp"
-        tools:layout_editor_absoluteY="83dp"
+        app:layout_constraintStart_toStartOf="@+id/tv_date"
         app:layout_constraintTop_toBottomOf="@id/tv_average_speed"
-        app:layout_constraintStart_toStartOf="@+id/tv_time"/>
+        tools:layout_editor_absoluteX="10dp"
+        tools:layout_editor_absoluteY="83dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
