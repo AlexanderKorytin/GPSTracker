@@ -12,6 +12,8 @@ interface LocationTrackInteractor {
 
     suspend fun getLocTrackByName(trackName: String): Flow<LocationTrack>
 
+    suspend fun getLocTrackById(trackId: Long): Flow<LocationTrack>
+
 
     suspend fun deleteLocTrack(locTrack: LocationTrack)
 }
