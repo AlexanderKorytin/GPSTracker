@@ -10,7 +10,7 @@ import java.time.ZoneOffset
 @Entity(tableName = "Locations_tracks")
 data class LocTrackEntity(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "trackId")
-    val id: Long? = null,
+    val id: Long,
     val date: String = getDate(),
     val time: String,
     val trackName: String,
