@@ -1,25 +1,33 @@
 package com.example.korytingpstracker.tracks.ui.viewmodel
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.korytingpstracker.main_menu.ui.models.LocationTrack
+import com.example.korytingpstracker.main_menu.ui.models.MainMenuScreenState
+import com.example.korytingpstracker.settings.ui.domain.api.SettingsInteractor
 import com.example.korytingpstracker.tracks.domain.api.LocationTrackInteractor
-import com.example.korytingpstracker.tracks.ui.models.LocationTrackScreenState
+import com.example.korytingpstracker.tracks.ui.models.LocationTracksScreenState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class LocationTrackViewModel(private val interactor: LocationTrackInteractor) : ViewModel() {
-    private var _screenState = MutableLiveData<LocationTrackScreenState>()
-    val screenState = _screenState
+class LocationTrackViewModel(private val dataBaseInteractor: LocationTrackInteractor,
+                             private val settingsInteractor: SettingsInteractor,
+    ) : ViewModel() {
+    private var _listTracksScreenState = MutableLiveData<LocationTracksScreenState>()
+    val listTracksScreenState get() = _listTracksScreenState
+
+    private var _currentTrackScreenState = MutableLiveData<MainMenuScreenState>()
+    val currentTrackScreenState get() =  _currentTrackScreenState
 
     fun getAllLocTracks() {
         viewModelScope.launch(Dispatchers.IO) {
-            interactor.getAllLocTracks().collect {
+            dataBaseInteractor.getAllLocTracks().collect {
                 if (it.isEmpty()) {
-                    _screenState.postValue(LocationTrackScreenState.Empty)
+                    _listTracksScreenState.postValue(LocationTracksScreenState.Empty)
                 } else {
-                    _screenState.postValue(LocationTrackScreenState.Content(it))
+                    _listTracksScreenState.postValue(LocationTracksScreenState.Content(it))
                 }
             }
         }
@@ -27,8 +35,20 @@ class LocationTrackViewModel(private val interactor: LocationTrackInteractor) : 
 
     fun deleteCurrentTrack(track: LocationTrack) {
         viewModelScope.launch(Dispatchers.IO) {
-            interactor.deleteLocTrack(track)
+            dataBaseInteractor.deleteLocTrack(track)
             getAllLocTracks()
         }
+    }
+
+    fun getTrackById(trackId: Long){
+        viewModelScope.launch(Dispatchers.IO){
+            dataBaseInteractor.getLocTrackById(trackId).collect{
+                _currentTrackScreenState.postValue(MainMenuScreenState.Content(it))
+            }
+        }
+    }
+
+    fun getColorLine(): Int {
+        return settingsInteractor.getColorLocationTrackLine()
     }
 }
