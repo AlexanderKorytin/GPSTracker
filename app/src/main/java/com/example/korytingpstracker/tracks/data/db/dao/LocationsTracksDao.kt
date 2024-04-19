@@ -18,6 +18,9 @@ interface LocationsTracksDao {
     @Query("SELECT * FROM Locations_tracks WHERE trackName = :trackName")
     suspend fun getLocTrackByName(trackName: String): LocTrackEntity
 
+    @Query("SELECT * FROM Locations_tracks WHERE trackId = :trackId")
+    suspend fun getLocTrackById(trackId: Long): LocTrackEntity
+
     @Delete
     suspend fun deleteLocTrack(locTrack: LocTrackEntity)
 }
