@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.example.korytingpstracker.R
 import com.example.korytingpstracker.databinding.FragmentCurrentTrackBinding
 import com.example.korytingpstracker.main_menu.ui.models.LocationTrack
 import com.example.korytingpstracker.main_menu.ui.models.MainMenuScreenState
@@ -15,6 +16,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 
 class CurrentTrackFragment : Fragment() {
@@ -38,9 +40,6 @@ class CurrentTrackFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val trackId = arguments?.getLong(CLICKED_TRACK) ?: 0L
         currentTrackViewModel.getTrackById(trackId)
-        color = currentTrackViewModel.getColorLine()
-        polyLine = Polyline()
-        polyLine?.outlinePaint?.color = color
         currentTrackViewModel.currentTrackScreenState.observe(viewLifecycleOwner) {
             when (it) {
                 is MainMenuScreenState.Content -> {
@@ -66,11 +65,14 @@ class CurrentTrackFragment : Fragment() {
         tvName.text = name
         if (currentTrack.geoPointList.isNotEmpty()) {
             polyLine = paintedPoints(currentTrack.geoPointList)
+            color = currentTrackViewModel.getColorLine()
+            polyLine?.outlinePaint?.color = color
             tvMap.overlays.add(polyLine)
             showTrack(
                 currentTrack.geoPointList[0],
                 currentTrack.geoPointList.let { it[it.size - 1] })
         }
+        setMarkers(currentTrack.geoPointList)
     }
 
     private fun paintedPoints(list: List<GeoPoint>): Polyline = Polyline().apply {
@@ -92,12 +94,24 @@ class CurrentTrackFragment : Fragment() {
                     delay(TIME_OUT)
                 }
                 showStart.join()
-
                 val showEnd = launch {
                     animateTo(endPoint)
                 }
             }
         }
+
+    private fun setMarkers(list: List<GeoPoint>) = with(binding) {
+        val startMarker = Marker(tvMap)
+        val endMarker = Marker(tvMap)
+        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+        endMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+        startMarker.icon = resources.getDrawable(R.drawable.ic_start)
+        endMarker.icon = resources.getDrawable(R.drawable.ic_finish)
+        startMarker.position = list[0]
+        endMarker.position = list.last()
+        tvMap.overlays.add(startMarker)
+        tvMap.overlays.add(endMarker)
+    }
 
     companion object {
         private const val TIME_OUT = 2000L
