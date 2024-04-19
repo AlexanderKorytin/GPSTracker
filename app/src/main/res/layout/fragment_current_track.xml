@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    tools:context=".main_menu.ui.fragments.MainFragment">
+    tools:context="tracks.ui.fragments.CurrentTrackFragment">
 
     <org.osmdroid.views.MapView
         android:id="@+id/tv_map"
@@ -16,7 +16,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"></org.osmdroid.views.MapView>
+        app:layout_constraintVertical_bias="0.0"/>
 
     <TextView
         android:id="@+id/tv_name"
