@@ -18,9 +18,9 @@
 
         <ImageView
             android:id="@+id/tv_track_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_location_set"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_route"
             android:backgroundTint="@color/app_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
