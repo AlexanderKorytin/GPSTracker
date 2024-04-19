@@ -63,7 +63,7 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val anim = AnimationUtils.loadAnimation(
             requireContext(),
-            com.google.android.material.R.anim.abc_fade_in
+            R.anim.slide_in_left
         )
         color = mainViewModel.getColorLine()
         setOnClicks()
@@ -93,7 +93,7 @@ class MainFragment : Fragment() {
         super.onDestroyView()
         val anim = AnimationUtils.loadAnimation(
             requireContext(),
-            com.google.android.material.R.anim.abc_fade_out
+            R.anim.slide_out_right
         )
         binding.root.startAnimation(anim)
         mainViewModel.unRegisteringRecevier(requireContext())
