@@ -37,5 +37,6 @@
     <string name="save_track_dialog_message" translatable="false">Would you like to save the track? - Enter the name and click "yes"!</string>
 
     <string name="playlist_name_hint" translatable="false">Enter track name</string>
+    <string name="app_data_base_error" translatable="false">Data base error, return and try again!</string>
 
 </resources>
