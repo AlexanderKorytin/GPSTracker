@@ -219,8 +219,8 @@ class MainFragment : Fragment() {
             myLocationNewOverlay.enableFollowLocation()
             myLocationNewOverlay.runOnFirstFix {
                 tvMap.overlays.clear()
-                tvMap.overlays.add(myLocationNewOverlay)
                 tvMap.overlays.add(polyLine)
+                tvMap.overlays.add(myLocationNewOverlay)
             }
             myLocationNewOverlay.enableFollowLocation()
             tvMap.controller.setZoom(17.0)
