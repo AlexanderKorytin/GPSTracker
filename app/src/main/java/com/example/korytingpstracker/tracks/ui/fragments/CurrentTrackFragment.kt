@@ -24,9 +24,8 @@ class CurrentTrackFragment : Fragment() {
     private var color = 0
     private var _binding: FragmentCurrentTrackBinding? = null
     private val binding get() = _binding!!
-
     private val currentTrackViewModel: LocationTrackViewModel by viewModel<LocationTrackViewModel>()
-
+    private var startPoint: GeoPoint = GeoPoint(0.0, 0.0)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,6 +45,9 @@ class CurrentTrackFragment : Fragment() {
                     processingResult(it.data)
                 }
             }
+        }
+        binding.buttonMyPosition.setOnClickListener {
+            binding.tvMap.controller.animateTo(startPoint)
         }
     }
 
@@ -68,6 +70,7 @@ class CurrentTrackFragment : Fragment() {
             color = currentTrackViewModel.getColorLine()
             polyLine?.outlinePaint?.color = color
             tvMap.overlays.add(polyLine)
+            startPoint = currentTrack.geoPointList[0]
             showTrack(
                 currentTrack.geoPointList[0],
                 currentTrack.geoPointList.let { it[it.size - 1] })
