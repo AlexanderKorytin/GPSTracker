@@ -14,7 +14,7 @@ class MainRepositoryImpl(
 
     override fun getLocationProvider(): GpsMyLocationProvider = mapClient.getGPSProvider()
     override fun getLocationServiceState(): Boolean {
-        return LocationService.getStateSeervice()
+        return LocationService.getStateService()
     }
 
     override fun setStartTime(time: Long) {

@@ -109,7 +109,7 @@ class MainViewModel(
     }
 
     fun checkedLocationServiceState() {
-        stateLocService.value = (mainInteractor.getStateSeervice())
+        stateLocService.value = (mainInteractor.getStateService())
     }
     fun getProvider() {
         locationProvider.postValue(mainInteractor.getLocationProvider().provider)
