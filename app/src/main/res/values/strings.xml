@@ -8,6 +8,7 @@
     <string name="dialog__loc_title">Permission for fine geolocation</string>
     <string name="dialog__loc_message">For normal operation, the application needs permission to access the geodata. You will be redirected to the settings screen.</string>
 
+    <string name="kolobok_is_running" translatable="false">Приложение колобок запущено в фоне</string>
     <string name="dialog_location_title">The "Location detection" setting is disabled</string>
     <string name="dialog_location_message">Would you like to turn it on? The application will not work with the disabled setting!</string>
     <string name="yes">Yes</string>
