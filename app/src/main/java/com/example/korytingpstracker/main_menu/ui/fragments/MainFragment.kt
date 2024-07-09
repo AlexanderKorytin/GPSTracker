@@ -2,6 +2,7 @@ package com.example.korytingpstracker.main_menu.ui.fragments
 
 import android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -67,7 +68,7 @@ class MainFragment : Fragment() {
         )
         color = mainViewModel.getColorLine()
         setOnClicks()
-        checkLocationServiseState()
+        checkLocationServiceState()
         binding.root.startAnimation(anim)
         mainViewModel.getProvider()
         updateTime()
@@ -135,6 +136,7 @@ class MainFragment : Fragment() {
             arrayOf(
                 ACCESS_FINE_LOCATION,
                 ACCESS_BACKGROUND_LOCATION,
+                POST_NOTIFICATIONS
             )
         )
         lifecycleScope.launch(Dispatchers.Main) {
@@ -236,7 +238,7 @@ class MainFragment : Fragment() {
         )
     }
 
-    private fun checkLocationServiseState() {
+    private fun checkLocationServiceState() {
         mainViewModel.checkedLocationServiceState()
         mainViewModel.getStateService().observe(viewLifecycleOwner) {
             isServiceLocRunning = it
@@ -250,16 +252,18 @@ class MainFragment : Fragment() {
     }
 
     fun setOnClicks() = with(binding) {
-        val listner = onClick()
-        buttonStartStop.setOnClickListener(listner)
-        buttonMyPosition.setOnClickListener(listner)
+        val listener = onClick()
+        buttonStartStop.setOnClickListener(listener)
+        buttonMyPosition.setOnClickListener(listener)
     }
 
     private fun onClick(): OnClickListener {
         return OnClickListener {
             when (it.id) {
                 R.id.button_start_stop -> {
-                    startStopService()
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        checkNotificationPermission()
+                    }
                 }
 
                 R.id.button_my_position -> {
@@ -324,6 +328,12 @@ class MainFragment : Fragment() {
         mainViewModel.getCurrentTime().observe(viewLifecycleOwner) {
             binding.tvTime.text = "${binding.tvTime.text.split(':')[0]}: ${it}"
             trackTimeForSaved = it
+        }
+    }
+
+    private suspend fun checkNotificationPermission() {
+        requester.request(POST_NOTIFICATIONS).collect {
+            startStopService()
         }
     }
 }
