@@ -12,7 +12,6 @@ import android.content.pm.ServiceInfo
 import android.location.Location
 import android.os.IBinder
 import android.os.Looper
-import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
@@ -54,7 +53,6 @@ class LocationService : Service() {
                 }
             }
             lastLocation = currentLocation
-            Log.d("MyLog", "Distance: ${distance}")
         }
     }
 
@@ -69,7 +67,7 @@ class LocationService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        stratNotification()
+        startNotification()
         isRaning = true
         startLocationUpdates()
         return START_STICKY
@@ -89,9 +87,9 @@ class LocationService : Service() {
         locProvider.removeLocationUpdates(locationCallback)
     }
 
-    private fun stratNotification() {
+    private fun startNotification(): NotificationChannel {
         val notificationChanel = NotificationChannel(
-            CHANEL_ID,
+            CHANNEL_ID,
             "notification service kolobok",
             NotificationManager.IMPORTANCE_HIGH
         )
@@ -104,9 +102,9 @@ class LocationService : Service() {
                 PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         val notification = NotificationCompat
-            .Builder(this, CHANEL_ID)
+            .Builder(this, CHANNEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle("Kolobok running")
+            .setContentTitle(applicationContext.getString(R.string.kolobok_is_running))
             .setContentIntent(pandingIntent)
             .setOngoing(true)
             .build()
@@ -116,6 +114,7 @@ class LocationService : Service() {
             notification,
             ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
         )
+        return notificationChanel
     }
 
     private fun initLocation() {
@@ -143,7 +142,7 @@ class LocationService : Service() {
 
     companion object {
         private var isRaning = false
-        fun getStateSeervice(): Boolean = isRaning
+        fun getStateService(): Boolean = isRaning
 
         private var startTime = 0L
         fun getStartTime(): Long = startTime
@@ -152,7 +151,7 @@ class LocationService : Service() {
         }
 
         const val LOC_INTENT = " loc intent"
-        private const val CHANEL_ID = "chanel_kolobok"
+        private const val CHANNEL_ID = "chanel_kolobok"
         private const val REQUEST_CODE = 10
         private const val ERROR_BOUNDARY_SPEED = 0.3f
         private const val UPDATE_TIME_DEFAULT = 5000L
