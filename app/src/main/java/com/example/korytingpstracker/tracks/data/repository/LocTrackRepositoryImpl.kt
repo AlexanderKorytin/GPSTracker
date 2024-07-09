@@ -33,7 +33,7 @@ class LocTrackRepositoryImpl(
         try {
             emit(map(locTrack))
         } catch (e: NullPointerException) {
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 Toast.makeText(
                     context,
                     context.getString(R.string.app_data_base_error),
